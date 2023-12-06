@@ -1,0 +1,492 @@
+
+
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Root System Generator Stats &#8212; Root System Generator  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bizstyle.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Root System Generator Spatial" href="spatial.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="spatial.html" title="Root System Generator Spatial"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Root System Generator  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Root System Lib</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Root System Generator Stats</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="root-system-generator-stats">
+<h1>Root System Generator Stats<a class="headerlink" href="#root-system-generator-stats" title="Permalink to this heading">¶</a></h1>
+<span class="target" id="module-root_system_lib.stats"></span><p>Root System Library</p>
+<p>A library of methods for calculating statistics pertaining to synthetic root system generation.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_average_root_length_density_depth">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_average_root_length_density_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soil_block_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_scalar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_average_root_length_density_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_average_root_length_density_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average root length density with respect to soil depth.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+<dt>soil_block_size: float</dt><dd><p>The size of each soil block.</p>
+</dd>
+<dt>as_scalar: bool</dt><dd><p>Convert the RLD to scalar value.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>rld_df: DataFrame</dt><dd><p>The dataframe of average root length density calculations.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_average_root_weight_density_depth">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_average_root_weight_density_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soil_block_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_scalar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_average_root_weight_density_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_average_root_weight_density_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average root weight density with respect to soil depth.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+<dt>soil_block_size: float</dt><dd><p>The size of each soil block.</p>
+</dd>
+<dt>rtd: float</dt><dd><p>The root tissue density.</p>
+</dd>
+<dt>as_scalar: bool</dt><dd><p>Convert the RLD to scalar value.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>rwd_df: DataFrame</dt><dd><p>The dataframe of average root length density calculations.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_average_specific_root_length">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_average_specific_root_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_average_specific_root_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_average_specific_root_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average specific root length.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+<dt>rtd: float</dt><dd><p>The root tissue density.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>srl: float</dt><dd><p>The average specific root length.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_root_average_diameter">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_root_average_diameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_root_average_diameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_root_average_diameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average root diameter.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>diameter: float</dt><dd><p>The average root diameter.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_root_average_length">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_root_average_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_root_average_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_root_average_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average root length.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>length: float</dt><dd><p>The average root length.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_root_average_volume">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_root_average_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_root_average_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_root_average_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average root volume, where each root segment is treated as a cylinder.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>rv: float</dt><dd><p>The average root volume.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_root_average_weight">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_root_average_weight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_root_average_weight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_root_average_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average root weight, where each root segment is treated as a cylinder.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+<dt>rtd: float</dt><dd><p>The root tissue density.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>weight: float</dt><dd><p>The average root weight.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_root_depth">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_root_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_cum_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_root_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_root_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the cumulative root depth.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+<dt>depth_cum_col: str</dt><dd><p>The dataframe column to calculate values.</p>
+</dd>
+<dt>bins: int</dt><dd><p>The number of bins when discretising data.</p>
+</dd>
+<dt>values_only: bool</dt><dd><p>Only include the cumulative root depth, and not the cumulative proportions assigned to each bin.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>cdf, bins: tuple</dt><dd><p>The cumulative distribution function and bins.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_root_horiz_distance">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_root_horiz_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontal_cum_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_root_horiz_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_root_horiz_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the cumulative horizontal root distance.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+<dt>horizontal_cum_cols: str</dt><dd><p>The dataframe column to calculate values.</p>
+</dd>
+<dt>bins: int</dt><dd><p>The number of bins when discretising data.</p>
+</dd>
+<dt>values_only: bool</dt><dd><p>Only include the cumulative root distance, and not the cumulative proportions assigned to each bin.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>cdf, bins: tuple</dt><dd><p>The cumulative distribution function and bins.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_root_length_density_depth">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_root_length_density_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soil_block_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_scalar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_root_length_density_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_root_length_density_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the root length density with respect to soil depth.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+<dt>soil_block_size: float</dt><dd><p>The size of each soil block.</p>
+</dd>
+<dt>as_scalar: bool</dt><dd><p>Convert the RLD to scalar value.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>rld_df: DataFrame</dt><dd><p>The dataframe of root length density calculations.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_root_stats">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_root_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_root_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_root_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate root statistics.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+<dt>out: str</dt><dd><p>The output file path.</p>
+</dd>
+<dt>bins: int</dt><dd><p>The number of bins when discretising data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_root_total_diameter">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_root_total_diameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_root_total_diameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_root_total_diameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the total root diameter.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>diameter: float</dt><dd><p>The total root diameter.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_root_total_length">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_root_total_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_root_total_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_root_total_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the total root length.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>length: float</dt><dd><p>The total root length.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_root_total_volume">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_root_total_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_root_total_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_root_total_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the total root volume, where each root segment is treated as a cylinder.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>rv: float</dt><dd><p>The total root volume.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_root_total_weight">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_root_total_weight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_root_total_weight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_root_total_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the total root weight, where each root segment is treated as a cylinder.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+<dt>rtd: float</dt><dd><p>The root tissue density.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>weight: float</dt><dd><p>The total root weight.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_root_weight_density_depth">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_root_weight_density_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soil_block_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_scalar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_root_weight_density_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_root_weight_density_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the root weight density with respect to soil depth.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+<dt>soil_block_size: float</dt><dd><p>The size of each soil block.</p>
+</dd>
+<dt>rtd: float</dt><dd><p>The root tissue density.</p>
+</dd>
+<dt>as_scalar: bool</dt><dd><p>Convert the RLD to scalar value.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>rwd_df: DataFrame</dt><dd><p>The dataframe of root length density calculations.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.calc_total_specific_root_length">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">calc_total_specific_root_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#calc_total_specific_root_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.calc_total_specific_root_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the total specific root length.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+<dt>rtd: float</dt><dd><p>The root tissue density.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>srl: float</dt><dd><p>The total specific root length.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.exec_root_stats_map">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">exec_root_stats_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_stats_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_stats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#exec_root_stats_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.exec_root_stats_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute root statistic functions, pass arguments from the kwargs map, and return the mapped results.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+<dt>root_stats_map: dict</dt><dd><p>The dictionary of available root stats.</p>
+</dd>
+<dt>root_stats: list</dt><dd><p>The list of requested root stats.</p>
+</dd>
+<dt>kwargs_map: dict</dt><dd><p>A map of arguments passed to each statistic.</p>
+</dd>
+<dt>root_type: str</dt><dd><p>The root type classification: Fine or structural roots.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>map: dict</dt><dd><p>The map of calculated root statistics.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.get_df_coords">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">get_df_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#get_df_coords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.get_df_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get 3D coordinates from dataframe</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The dataframe of root data.</p>
+</dd>
+<dt>col: str</dt><dd><p>The column name.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>coordinates: DataFrame</dt><dd><p>The root coordinates.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.get_points_inside_cube">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">get_points_inside_cube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cube</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#get_points_inside_cube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.get_points_inside_cube" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the location of each point with respect to each soil block.</p>
+<dl class="simple">
+<dt>cube: DataFrame</dt><dd><p>The soil cube dataframe.</p>
+</dd>
+<dt>df: DataFrame</dt><dd><p>The root dataframe.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>df_res: DataFrame</dt><dd><p>The dataframe query results for whether each point is located within the soil block.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.get_root_stats_map">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">get_root_stats_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#get_root_stats_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.get_root_stats_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a map of available root statistics, and associated functions and arguments.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.read_stats_data">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">read_stats_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">calc_statistics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_stats_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_stats_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/root_system_lib/stats.html#read_stats_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.read_stats_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read either an observations file or stats file. Converts the resulting dataframe into a dictionary.</p>
+<dl class="simple">
+<dt>calc_statistics: bool</dt><dd><p>Whether or not to calculate root statistics from the observation file.</p>
+</dd>
+<dt>obs_file: str</dt><dd><p>The file path of the observation CSV file.</p>
+</dd>
+<dt>stats_file: str</dt><dd><p>The file path of the root statistics CSV file.</p>
+</dd>
+<dt>root_stats_list: list</dt><dd><p>The list of requested root stats.</p>
+</dd>
+<dt>kwargs_map: dict</dt><dd><p>A map of arguments passed to each statistic.</p>
+</dd>
+<dt>col_stats_map: list</dt><dd><p>A list of root statistics and their mapped column names.</p>
+</dd>
+<dt>root_type: str</dt><dd><p>The root type classification: Fine or structural roots.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>map: dict</dt><dd><p>The map of calculated root statistics.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.stats.root_cum_sum">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.stats.</span></span><span class="sig-name descname"><span class="pre">root_cum_sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">array</span></span></span><a class="reference internal" href="../_modules/root_system_lib/stats.html#root_cum_sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.stats.root_cum_sum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the cumulative density function for root coordinates.</p>
+<dl class="simple">
+<dt>coord: array (n, 3)</dt><dd><p>The 3D root coordinates.</p>
+</dd>
+<dt>bins: int</dt><dd><p>The number of bins when discretising data.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>cdf, bins: tupple</dt><dd><p>The cumulative distribution function and bins.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="spatial.html"
+                          title="previous chapter">Root System Generator Spatial</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/root-system-lib/stats.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="spatial.html" title="Root System Generator Spatial"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Root System Generator  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Root System Lib</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Root System Generator Stats</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, James Bristow.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
+    </div>
+  </body>
+</html>

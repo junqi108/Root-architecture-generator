@@ -1,0 +1,390 @@
+
+
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Bayesian Root Generator &#8212; Root System Generator  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bizstyle.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Optimisation Root Generator" href="root-gen-optimise.html" />
+    <link rel="prev" title="Root Generator" href="root-gen.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="root-gen-optimise.html" title="Optimisation Root Generator"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="root-gen.html" title="Root Generator"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Root System Generator  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Root System Generator Command Line</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Bayesian Root Generator</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="bayesian-root-generator">
+<h1>Bayesian Root Generator<a class="headerlink" href="#bayesian-root-generator" title="Permalink to this heading">¶</a></h1>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
+<p>This script will construct a Bayesian statistical model using the Approximate Bayesian Computation (ABC) method. More specifically, the posterior of the Bayesian model will be evaluated by approximating the likelihood of the statistical model.</p>
+<p>To accomplish this, the model will generate synthetic root data with respect to some summary statistics. Data that exceed a dissimilarity threshold between observed and generated summary statistics will be discarded, while those within the threshold will be retained.</p>
+<p><a class="reference external" href="https://www.pymc.io/welcome.html">The PyMC probablistic programming language has been used to construct this model.</a></p>
+<p>The <em>draws</em> parameter is extremely important. This determines the number of samples to draw from the posterior. You will typically want somewhere between 100-1000 draws per chain.</p>
+<p>The <em>chains</em> parameter determines the number of independent Markov chains to run.</p>
+<p>The default dissimilarity <em>distance</em> is the Euclidean distance.</p>
+<p>The current priors specified for each parameter are uninformative (i.e. uniformly distributed). It is possible to specify the lower and upper bounds for each prior.</p>
+<p>Generally speaking, the wider the intervals of each prior, the more difficult the sampling process.</p>
+<p>However, using very constrained intervals will lead to very similar looking root systems - there will be a lack of diversity in the resulting synthetic root systems.</p>
+<p>Please review the documentation below for supported model parameters.</p>
+</section>
+<section id="arguments">
+<h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this heading">¶</a></h2>
+<p><p>Perform Bayesian inference on a synthetic root system using ABC-SMC.</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">root_gen_bayesian</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">from_config</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">min_vattempts</span> <span class="n">MIN_VATTEMPTS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">max_vattempts</span> <span class="n">MAX_VATTEMPTS</span><span class="p">]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">min_correction_angle</span> <span class="n">MIN_CORRECTION_ANGLE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">max_correction_angle</span> <span class="n">MAX_CORRECTION_ANGLE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">visualise</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">draws</span> <span class="n">DRAWS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">steps</span> <span class="n">STEPS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">chains</span> <span class="n">CHAINS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">parallel</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">distance</span> <span class="p">{</span><span class="n">euclidean</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">species</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">obs_file</span> <span class="n">OBS_FILE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">stats_file</span> <span class="n">STATS_FILE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">calc_statistics</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="nb">dir</span> <span class="n">DIR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">out</span> <span class="n">OUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="nb">round</span> <span class="n">ROUND</span><span class="p">]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">bins</span> <span class="n">BINS</span><span class="p">]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">root_stat</span> <span class="p">{</span><span class="n">depth_cum</span><span class="p">,</span><span class="n">horizontal_cum</span><span class="p">,</span><span class="n">rld_depth</span><span class="p">,</span><span class="n">average_rld_depth</span><span class="p">,</span><span class="n">rwd_depth</span><span class="p">,</span><span class="n">average_rwd_depth</span><span class="p">,</span><span class="n">total_srl</span><span class="p">,</span><span class="n">average_srl</span><span class="p">,</span><span class="n">total_volume</span><span class="p">,</span><span class="n">average_volume</span><span class="p">,</span><span class="n">total_weight</span><span class="p">,</span><span class="n">average_weight</span><span class="p">,</span><span class="n">total_length</span><span class="p">,</span><span class="n">total_diameter</span><span class="p">,</span><span class="n">average_length</span><span class="p">,</span><span class="n">average_diameter</span><span class="p">}]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">col_stats_map</span> <span class="n">COL_STATS_MAP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">min_order</span> <span class="n">MIN_ORDER</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">max_order</span> <span class="n">MAX_ORDER</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">origin_min</span> <span class="n">ORIGIN_MIN</span><span class="p">]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">origin_max</span> <span class="n">ORIGIN_MAX</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">r_ratio</span> <span class="n">R_RATIO</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">froot_threshold</span> <span class="n">FROOT_THRESHOLD</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">root_type</span> <span class="p">{</span><span class="n">structural</span><span class="p">,</span><span class="n">fine</span><span class="p">}]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">min_rnum_out</span> <span class="n">MIN_RNUM_OUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">max_rnum_out</span> <span class="n">MAX_RNUM_OUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">min_rnum_in</span> <span class="n">MIN_RNUM_IN</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">max_rnum_in</span> <span class="n">MAX_RNUM_IN</span><span class="p">]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">min_prlength</span> <span class="n">MIN_PRLENGTH</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">max_prlength</span> <span class="n">MAX_PRLENGTH</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">prlength_var</span> <span class="n">PRLENGTH_VAR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">srnum_min</span> <span class="n">SRNUM_MIN</span><span class="p">]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">srnum_max</span> <span class="n">SRNUM_MAX</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">srnum_var</span> <span class="n">SRNUM_VAR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">min_snum_growth</span> <span class="n">MIN_SNUM_GROWTH</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">max_snum_growth</span> <span class="n">MAX_SNUM_GROWTH</span><span class="p">]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">min_srlength</span> <span class="n">MIN_SRLENGTH</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">max_srlength</span> <span class="n">MAX_SRLENGTH</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">srlength_var</span> <span class="n">SRLENGTH_VAR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">min_snum</span> <span class="n">MIN_SNUM</span><span class="p">]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">max_snum</span> <span class="n">MAX_SNUM</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">fix_seg</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">min_length_reduction</span> <span class="n">MIN_LENGTH_REDUCTION</span><span class="p">]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">max_length_reduction</span> <span class="n">MAX_LENGTH_REDUCTION</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">min_vary</span> <span class="n">MIN_VARY</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">max_vary</span> <span class="n">MAX_VARY</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">sblock_size</span> <span class="n">SBLOCK_SIZE</span><span class="p">]</span>
+                         <span class="p">[</span><span class="o">--</span><span class="n">random_seed</span> <span class="n">RANDOM_SEED</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="Named Arguments">
+<h3>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this heading">¶</a></h3>
+<dl class="option-list">
+<dt><kbd>--from_config</kbd></dt>
+<dd><p>Possible choices: 0, 1</p>
+<p>Override parameters using a root_config.yaml file. Defaults to ‘0’.</p>
+<p>Default: 0</p>
+</dd>
+<dt><kbd>--min_vattempts</kbd></dt>
+<dd><p>The minimum number of attempts to fix each validation error. Defaults to ‘10’.</p>
+<p>Default: 10</p>
+</dd>
+<dt><kbd>--max_vattempts</kbd></dt>
+<dd><p>The maximum number of attempts to fix each validation error. Defaults to ‘15’.</p>
+<p>Default: 15</p>
+</dd>
+<dt><kbd>--min_correction_angle</kbd></dt>
+<dd><p>The minimum rotation angle about the y-axis for out-of-bounds roots. Defaults to ‘75’.</p>
+<p>Default: 75</p>
+</dd>
+<dt><kbd>--max_correction_angle</kbd></dt>
+<dd><p>The maximum rotation angle about the y-axis for out-of-bounds roots. Defaults to ‘105’.</p>
+<p>Default: 105</p>
+</dd>
+<dt><kbd>--visualise</kbd></dt>
+<dd><p>Possible choices: 0, 1</p>
+<p>Visualise the trial results. Defaults to ‘0’.</p>
+<p>Default: 0</p>
+</dd>
+<dt><kbd>--draws</kbd></dt>
+<dd><p>The number of samples to draw from the posterior. And also the number of independent chains. Defaults to ‘5’.</p>
+<p>Default: 5</p>
+</dd>
+<dt><kbd>--steps</kbd></dt>
+<dd><p>The number of steps for each Markov Chain. Defaults to ‘5’.</p>
+<p>Default: 5</p>
+</dd>
+<dt><kbd>--chains</kbd></dt>
+<dd><p>The number of chains to sample. Running independent chains is important for some convergence statistics. Defaults to ‘1’.</p>
+<p>Default: 1</p>
+</dd>
+<dt><kbd>--parallel</kbd></dt>
+<dd><p>Possible choices: 0, 1</p>
+<p>Distribute computations across cores if the number of cores is larger than 1. Defaults to ‘0’.</p>
+<p>Default: 0</p>
+</dd>
+<dt><kbd>--distance</kbd></dt>
+<dd><p>Possible choices: euclidean</p>
+<p>The data dissimilarity metric. Defaults to ‘euclidean’.</p>
+<p>Default: “euclidean”</p>
+</dd>
+<dt><kbd>--species</kbd></dt>
+<dd><p>Possible choices: 0, 1</p>
+<p>The species associated with the root system. Defaults to ‘0’.</p>
+<p>Default: 0</p>
+</dd>
+<dt><kbd>--obs_file</kbd></dt>
+<dd><p>The observed root data file name. Defaults to ‘data/root_obs.csv’.</p>
+<p>Default: “data/root_obs.csv”</p>
+</dd>
+<dt><kbd>--stats_file</kbd></dt>
+<dd><p>The observed root statistics file name. Defaults to ‘data/root_stats.csv’.</p>
+<p>Default: “data/root_stats.csv”</p>
+</dd>
+<dt><kbd>--calc_statistics</kbd></dt>
+<dd><p>Possible choices: 0, 1</p>
+<p>Calculate summary statistics from the observed root data. Defaults to ‘1’.</p>
+<p>Default: 1</p>
+</dd>
+<dt><kbd>--dir</kbd></dt>
+<dd><p>Output directory. Defaults to ‘data/bayesian’.</p>
+<p>Default: “data/bayesian”</p>
+</dd>
+<dt><kbd>--out</kbd></dt>
+<dd><p>Output CSV file name. Defaults to ‘root_bayesian.csv’.</p>
+<p>Default: “root_bayesian.csv”</p>
+</dd>
+<dt><kbd>--round</kbd></dt>
+<dd><p>Number of decimal places to round values when writing to file. Defaults to ‘10’.</p>
+<p>Default: 10</p>
+</dd>
+<dt><kbd>--bins</kbd></dt>
+<dd><p>Number of bins when binning root data. Defaults to ‘10’.</p>
+<p>Default: 10</p>
+</dd>
+<dt><kbd>--root_stat</kbd></dt>
+<dd><p>Possible choices: depth_cum, horizontal_cum, rld_depth, average_rld_depth, rwd_depth, average_rwd_depth, total_srl, average_srl, total_volume, average_volume, total_weight, average_weight, total_length, total_diameter, average_length, average_diameter</p>
+<p>A root statistic to compare simulated and real data. Defaults to ‘depth_cum’.</p>
+<p>Default: “depth_cum”</p>
+</dd>
+<dt><kbd>--col_stats_map</kbd></dt>
+<dd><p>A comma-delimited list of mapped columns and statistics. Defaults to ‘None’.</p>
+</dd>
+<dt><kbd>--min_order</kbd></dt>
+<dd><p>The minimum root organ order. Defaults to ‘3’.</p>
+<p>Default: 3</p>
+</dd>
+<dt><kbd>--max_order</kbd></dt>
+<dd><p>The maximum root organ order. Defaults to ‘4’.</p>
+<p>Default: 4</p>
+</dd>
+<dt><kbd>--origin_min</kbd></dt>
+<dd><p>The minimum distance of the initial primary root from the origin (cm). Defaults to ‘0.01’.</p>
+<p>Default: 0.01</p>
+</dd>
+<dt><kbd>--origin_max</kbd></dt>
+<dd><p>The maximum distance of the initial primary root from the origin (cm). Defaults to ‘0.1’.</p>
+<p>Default: 0.1</p>
+</dd>
+<dt><kbd>--r_ratio</kbd></dt>
+<dd><p>Ratio of fine roots to structural roots based upon overall root diameter. Defaults to ‘0.5’.</p>
+<p>Default: 0.5</p>
+</dd>
+<dt><kbd>--froot_threshold</kbd></dt>
+<dd><p>Threshold for classifying a root as a fine root, rather than a structural root (mm). Defaults to ‘1.5’.</p>
+<p>Default: 1.5</p>
+</dd>
+<dt><kbd>--root_type</kbd></dt>
+<dd><p>Possible choices: structural, fine</p>
+<p>The root type to calculate summary statistics for. Defaults to ‘None’.</p>
+</dd>
+<dt><kbd>--min_rnum_out</kbd></dt>
+<dd><p>The minimum number of outer primary roots to be generated. Defaults to ‘8’.</p>
+<p>Default: 8</p>
+</dd>
+<dt><kbd>--max_rnum_out</kbd></dt>
+<dd><p>The maximum number of outer primary roots to be generated. Defaults to ‘10’.</p>
+<p>Default: 10</p>
+</dd>
+<dt><kbd>--min_rnum_in</kbd></dt>
+<dd><p>The minimum number of inner primary roots to be generated. Defaults to ‘6’.</p>
+<p>Default: 6</p>
+</dd>
+<dt><kbd>--max_rnum_in</kbd></dt>
+<dd><p>The maximum number of inner primary roots to be generated. Defaults to ‘8’.</p>
+<p>Default: 8</p>
+</dd>
+<dt><kbd>--min_prlength</kbd></dt>
+<dd><p>The minimum length of each primary root (cm). Defaults to ‘20’.</p>
+<p>Default: 20</p>
+</dd>
+<dt><kbd>--max_prlength</kbd></dt>
+<dd><p>The maximum length of each primary root (cm). Defaults to ‘30’.</p>
+<p>Default: 30</p>
+</dd>
+<dt><kbd>--prlength_var</kbd></dt>
+<dd><p>The variance for the interval of the length of each primary root (cm). Defaults to ‘3’.</p>
+<p>Default: 3</p>
+</dd>
+<dt><kbd>--srnum_min</kbd></dt>
+<dd><p>The minimum number of secondary roots to be generated. Defaults to ‘1’.</p>
+<p>Default: 1</p>
+</dd>
+<dt><kbd>--srnum_max</kbd></dt>
+<dd><p>The maximum number of secondary roots to be generated. Defaults to ‘4’.</p>
+<p>Default: 4</p>
+</dd>
+<dt><kbd>--srnum_var</kbd></dt>
+<dd><p>The variance for the interval of the number of secondary roots to be generated. Defaults to ‘1’.</p>
+<p>Default: 1</p>
+</dd>
+<dt><kbd>--min_snum_growth</kbd></dt>
+<dd><p>The minimum growth rate for the number of secondary roots per root order. Defaults to ‘0.4’.</p>
+<p>Default: 0.4</p>
+</dd>
+<dt><kbd>--max_snum_growth</kbd></dt>
+<dd><p>The maximum growth rate for the number of secondary roots per root order. Defaults to ‘0.6’.</p>
+<p>Default: 0.6</p>
+</dd>
+<dt><kbd>--min_srlength</kbd></dt>
+<dd><p>The minimum length of each secondary root (cm). Defaults to ‘100’.</p>
+<p>Default: 100</p>
+</dd>
+<dt><kbd>--max_srlength</kbd></dt>
+<dd><p>The maximum length of each secondary root (cm). Defaults to ‘200’.</p>
+<p>Default: 200</p>
+</dd>
+<dt><kbd>--srlength_var</kbd></dt>
+<dd><p>The variance for the interval of the length of each secondary root (cm). Defaults to ‘30’.</p>
+<p>Default: 30</p>
+</dd>
+<dt><kbd>--min_snum</kbd></dt>
+<dd><p>The minimum number of segments per root. Defaults to ‘10’.</p>
+<p>Default: 10</p>
+</dd>
+<dt><kbd>--max_snum</kbd></dt>
+<dd><p>The maximum number of segments per root. Defaults to ‘15’.</p>
+<p>Default: 15</p>
+</dd>
+<dt><kbd>--fix_seg</kbd></dt>
+<dd><p>Possible choices: 0, 1</p>
+<p>Use a fixed segment size for each root. Defaults to ‘0’.</p>
+<p>Default: 0</p>
+</dd>
+<dt><kbd>--min_length_reduction</kbd></dt>
+<dd><p>The minimum root length reduction factor. Defaults to ‘0.4’.</p>
+<p>Default: 0.4</p>
+</dd>
+<dt><kbd>--max_length_reduction</kbd></dt>
+<dd><p>The maximum root length reduction factor. Defaults to ‘0.6’.</p>
+<p>Default: 0.6</p>
+</dd>
+<dt><kbd>--min_vary</kbd></dt>
+<dd><p>Minimum random variation in degrees of subsequent segments along x, y, and z axes. Defaults to ‘20’.</p>
+<p>Default: 20</p>
+</dd>
+<dt><kbd>--max_vary</kbd></dt>
+<dd><p>Maximum random variation in degrees of subsequent segments along x, y, and z axes. Defaults to ‘40’.</p>
+<p>Default: 40</p>
+</dd>
+<dt><kbd>--sblock_size</kbd></dt>
+<dd><p>The (voxel) size of each soil block in cubic-cm. Defaults to ‘1’.</p>
+<p>Default: 1</p>
+</dd>
+<dt><kbd>--random_seed</kbd></dt>
+<dd><p>The random seed. Defaults to ‘None’.</p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Bayesian Root Generator</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#arguments">Arguments</a><ul>
+<li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="root-gen.html"
+                          title="previous chapter">Root Generator</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="root-gen-optimise.html"
+                          title="next chapter">Optimisation Root Generator</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/command-line/root-gen-bayesian.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="root-gen-optimise.html" title="Optimisation Root Generator"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="root-gen.html" title="Root Generator"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Root System Generator  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Root System Generator Command Line</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Bayesian Root Generator</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, James Bristow.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,192 @@
+
+
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Root System Generator Soil &#8212; Root System Generator  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bizstyle.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Root System Generator Spatial" href="spatial.html" />
+    <link rel="prev" title="Root System Generator Root" href="root.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="spatial.html" title="Root System Generator Spatial"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="root.html" title="Root System Generator Root"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Root System Generator  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Root System Lib</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Root System Generator Soil</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="root-system-generator-soil">
+<h1>Root System Generator Soil<a class="headerlink" href="#root-system-generator-soil" title="Permalink to this heading">¶</a></h1>
+<span class="target" id="module-root_system_lib.soil"></span><p>Soil Library</p>
+<p>A library of methods for synthetic soil generation.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.soil.build_soil_grid">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.soil.</span></span><span class="sig-name descname"><span class="pre">build_soil_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/root_system_lib/soil.html#build_soil_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.soil.build_soil_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a grid of soil blocks.</p>
+<dl class="simple">
+<dt>base_block: array (n, d)</dt><dd><p>The single base soil block.</p>
+</dd>
+<dt>block_dim: float</dt><dd><p>The dimensionality of a single soil block</p>
+</dd>
+<dt>x_bounds: tuple</dt><dd><p>The lower and upper bound of the x dimension.</p>
+</dd>
+<dt>y_bounds: tuple</dt><dd><p>The lower and upper bound of the y dimension.</p>
+</dd>
+<dt>z_bounds: tuple</dt><dd><p>The lower and upper bound of the z dimension.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>grid: tuple (n,d)  </dt><dd><p>The soil grid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.soil.calc_n_blocks">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.soil.</span></span><span class="sig-name descname"><span class="pre">calc_n_blocks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="../_modules/root_system_lib/soil.html#calc_n_blocks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.soil.calc_n_blocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the number of soil blocks needed to encapsulate the root system.</p>
+<dl class="simple">
+<dt>block_dim: float</dt><dd><p>The dimensionality of a single soil block</p>
+</dd>
+<dt>bound: list</dt><dd><p>The lower and upper boinds of the root system.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>n_min, n_max<span class="classifier">tuple (2,)  </span></dt><dd><p>The minimum and maximum number of soil blocks.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.soil.make_soil_block">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.soil.</span></span><span class="sig-name descname"><span class="pre">make_soil_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/root_system_lib/soil.html#make_soil_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.soil.make_soil_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a single soil block.</p>
+<dl class="simple">
+<dt>block_dim: float</dt><dd><p>The dimensionality of a single soil block</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>block<span class="classifier">array  </span></dt><dd><p>The soil block.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="root_system_lib.soil.make_soil_grid">
+<span class="sig-prename descclassname"><span class="pre">root_system_lib.soil.</span></span><span class="sig-name descname"><span class="pre">make_soil_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/root_system_lib/soil.html#make_soil_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#root_system_lib.soil.make_soil_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a grid of soil blocks. Calculate the bounds for the x,y, and z dimensions.</p>
+<dl class="simple">
+<dt>df: DataFrame</dt><dd><p>The dataframe of root data.</p>
+</dd>
+<dt>block_dim: float</dt><dd><p>The dimensionality of a single soil block</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>grid: DataFrame</dt><dd><p>The soil grid dataframe.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="root.html"
+                          title="previous chapter">Root System Generator Root</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="spatial.html"
+                          title="next chapter">Root System Generator Spatial</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/root-system-lib/soil.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="spatial.html" title="Root System Generator Spatial"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="root.html" title="Root System Generator Root"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Root System Generator  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Root System Lib</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Root System Generator Soil</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, James Bristow.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
+    </div>
+  </body>
+</html>

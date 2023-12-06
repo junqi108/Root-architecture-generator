@@ -1,0 +1,213 @@
+
+
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Generate summary statistics &#8212; Root System Generator  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bizstyle.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Root Generator" href="root-gen.html" />
+    <link rel="prev" title="Root System Generator Command Line" href="index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="root-gen.html" title="Root Generator"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Root System Generator Command Line"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Root System Generator  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Root System Generator Command Line</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Generate summary statistics</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="generate-summary-statistics">
+<h1>Generate summary statistics<a class="headerlink" href="#generate-summary-statistics" title="Permalink to this heading">¶</a></h1>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
+<p>This script will generate summary statistics from a file of observed values.</p>
+<p>The <em>root_stats</em> parameter is a comma-delimited list of root statistics which are mapped to a column by name.</p>
+<p>For example, try running the following command: <cite>generate_summary_stats.py –root_stats depth_cum=soil_depth_m,depth_cum=radial_distance_from_stem_m</cite></p>
+<p>The <em>obs_file</em> file should ideally be real field data that you wish to convert to a compatible format for the root simulator.</p>
+<p>The <em>sblock_size</em> parameter is used for determining the size of each soil block when dividing the soil system into a grid.</p>
+</section>
+<section id="arguments">
+<h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this heading">¶</a></h2>
+<p><p>Generate summary statistics from observed data.</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">generate_summary_stats</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">obs_file</span> <span class="n">OBS_FILE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">group_by</span> <span class="n">GROUP_BY</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">enable_group_by</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">copy_cols</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">col_list</span> <span class="n">COL_LIST</span><span class="p">]</span>
+                              <span class="p">[</span><span class="o">--</span><span class="nb">dir</span> <span class="n">DIR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">out</span> <span class="n">OUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="nb">round</span> <span class="n">ROUND</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">bins</span> <span class="n">BINS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">by_group</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">root_stats</span> <span class="n">ROOT_STATS</span><span class="p">]</span>
+                              <span class="p">[</span><span class="o">--</span><span class="n">sblock_size</span> <span class="n">SBLOCK_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">random_seed</span> <span class="n">RANDOM_SEED</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="Named Arguments">
+<h3>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this heading">¶</a></h3>
+<dl class="option-list">
+<dt><kbd>--obs_file</kbd></dt>
+<dd><p>The observed root data file name. Defaults to ‘data/field/apple_tree_root_data.csv’.</p>
+<p>Default: “data/field/apple_tree_root_data.csv”</p>
+</dd>
+<dt><kbd>--group_by</kbd></dt>
+<dd><p>A comma-delimited list of column names to group by. Defaults to ‘experiment_id,tree_id,age’.</p>
+<p>Default: “experiment_id,tree_id,age”</p>
+</dd>
+<dt><kbd>--enable_group_by</kbd></dt>
+<dd><p>Possible choices: 0, 1</p>
+<p>Enable group by functionality. Defaults to ‘1’.</p>
+<p>Default: 1</p>
+</dd>
+<dt><kbd>--copy_cols</kbd></dt>
+<dd><p>Possible choices: 0, 1</p>
+<p>Whether to directly copy columns from the existing dataframe. Defaults to ‘1’.</p>
+<p>Default: 1</p>
+</dd>
+<dt><kbd>--col_list</kbd></dt>
+<dd><p>A comma-delimited list of column names to group by. Defaults to ‘mean_rld_cm_cm3,total_root_to_1m__kg_per_plant’.</p>
+<p>Default: “mean_rld_cm_cm3,total_root_to_1m__kg_per_plant”</p>
+</dd>
+<dt><kbd>--dir</kbd></dt>
+<dd><p>Output directory. Defaults to ‘data/summary_stats’.</p>
+<p>Default: “data/summary_stats”</p>
+</dd>
+<dt><kbd>--out</kbd></dt>
+<dd><p>Output CSV file name. Defaults to ‘root_stats.csv’.</p>
+<p>Default: “root_stats.csv”</p>
+</dd>
+<dt><kbd>--round</kbd></dt>
+<dd><p>Number of decimal places to round values when writing to file. Defaults to ‘10’.</p>
+<p>Default: 10</p>
+</dd>
+<dt><kbd>--bins</kbd></dt>
+<dd><p>Number of bins when binning root data. Defaults to ‘10’.</p>
+<p>Default: 10</p>
+</dd>
+<dt><kbd>--by_group</kbd></dt>
+<dd><p>Possible choices: 0, 1</p>
+<p>Create on csv file per group. Defaults to ‘1’.</p>
+<p>Default: 1</p>
+</dd>
+<dt><kbd>--root_stats</kbd></dt>
+<dd><p>A comma-delimited list of summary statistics mapped to a column name. Defaults to ‘depth_cum=soil_depth_m,depth_cum=radial_distance_from_stem_m’.</p>
+<p>Default: “depth_cum=soil_depth_m,depth_cum=radial_distance_from_stem_m”</p>
+</dd>
+<dt><kbd>--sblock_size</kbd></dt>
+<dd><p>The (voxel) size of each soil block in cubic-cm. Defaults to ‘1’.</p>
+<p>Default: 1</p>
+</dd>
+<dt><kbd>--random_seed</kbd></dt>
+<dd><p>The random seed. Defaults to ‘None’.</p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Generate summary statistics</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#arguments">Arguments</a><ul>
+<li><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">Root System Generator Command Line</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="root-gen.html"
+                          title="next chapter">Root Generator</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/command-line/generate-summary-stats.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="root-gen.html" title="Root Generator"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Root System Generator Command Line"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Root System Generator  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Root System Generator Command Line</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Generate summary statistics</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, James Bristow.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
+    </div>
+  </body>
+</html>

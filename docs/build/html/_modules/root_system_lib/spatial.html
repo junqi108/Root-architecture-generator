@@ -1,0 +1,233 @@
+
+
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>root_system_lib.spatial &#8212; Root System Generator  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bizstyle.css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Root System Generator  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">root_system_lib.spatial</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for root_system_lib.spatial</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Root System Library</span>
+
+<span class="sd">A library of methods relating to spatial properties of synthetic root system generation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##########################################################################################################</span>
+<span class="c1">### Imports</span>
+<span class="c1">##########################################################################################################</span>
+
+<span class="c1"># External</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1">##########################################################################################################</span>
+<span class="c1">### Library</span>
+<span class="c1">##########################################################################################################</span>
+
+<div class="viewcode-block" id="get_x_rotation_matrix"><a class="viewcode-back" href="../../root-system-lib/spatial.html#root_system_lib.spatial.get_x_rotation_matrix">[docs]</a><span class="k">def</span> <span class="nf">get_x_rotation_matrix</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>   
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct a rotation matrix for the x axis.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    --------------</span>
+<span class="sd">    theta : float</span>
+<span class="sd">        The rotation angle in degrees.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ---------</span>
+<span class="sd">    rotate : (4, 4) float</span>
+<span class="sd">        The x rotation matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+    <span class="n">sin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+
+    <span class="n">x_rotate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">x_rotate</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span><span class="n">cos</span><span class="p">,</span> <span class="n">sin</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">]</span>
+    <span class="p">])</span>
+    <span class="k">return</span> <span class="n">x_rotate</span></div>
+
+<div class="viewcode-block" id="get_y_rotation_matrix"><a class="viewcode-back" href="../../root-system-lib/spatial.html#root_system_lib.spatial.get_y_rotation_matrix">[docs]</a><span class="k">def</span> <span class="nf">get_y_rotation_matrix</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>   
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct a rotation matrix for the y axis.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    --------------</span>
+<span class="sd">    theta : float</span>
+<span class="sd">        The rotation angle in degrees.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ---------</span>
+<span class="sd">    rotate : (4, 4) float</span>
+<span class="sd">        The y rotation matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">cos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+    <span class="n">sin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+
+    <span class="n">y_rotate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">y_rotate</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">cos</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">sin</span><span class="p">]</span>
+    <span class="n">y_rotate</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">sin</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cos</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">y_rotate</span></div>
+
+<div class="viewcode-block" id="get_z_rotation_matrix"><a class="viewcode-back" href="../../root-system-lib/spatial.html#root_system_lib.spatial.get_z_rotation_matrix">[docs]</a><span class="k">def</span> <span class="nf">get_z_rotation_matrix</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>   
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct a rotation matrix for the z axis.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    --------------</span>
+<span class="sd">    theta : float</span>
+<span class="sd">        The rotation angle in degrees.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ---------</span>
+<span class="sd">    rotate : (4, 4) float</span>
+<span class="sd">        The z rotation matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">cos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+    <span class="n">sin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+
+    <span class="n">z_rotate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">z_rotate</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span><span class="n">cos</span><span class="p">,</span> <span class="n">sin</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">]</span>
+    <span class="p">])</span>
+    <span class="k">return</span> <span class="n">z_rotate</span></div>
+
+<div class="viewcode-block" id="transform"><a class="viewcode-back" href="../../root-system-lib/spatial.html#root_system_lib.spatial.transform">[docs]</a><span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">roll</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pitch</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">yaw</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">translation</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">reflect</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">scale</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates the transformation matrix.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    --------------</span>
+<span class="sd">    roll: int</span>
+<span class="sd">        Rotation about the x-axis in degrees. </span>
+<span class="sd">    pitch: int </span>
+<span class="sd">        Rotation about the y-axis in degrees.  </span>
+<span class="sd">    yaw: int </span>
+<span class="sd">        Rotation about the z-axis in degrees. </span>
+<span class="sd">    translation: (3,) float</span>
+<span class="sd">        Translation matrix. </span>
+<span class="sd">    reflect: (4,) float</span>
+<span class="sd">        Reflection matrix. </span>
+<span class="sd">    scale: (4,) float</span>
+<span class="sd">        Scaling matrix. </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ---------</span>
+<span class="sd">    scale: (4, 4) float</span>
+<span class="sd">        Transformation matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create transformation matrix</span>
+    <span class="c1"># Rotations</span>
+    <span class="n">x_rotate</span> <span class="o">=</span> <span class="n">get_x_rotation_matrix</span><span class="p">(</span><span class="n">roll</span><span class="p">)</span>
+    <span class="n">y_rotate</span> <span class="o">=</span> <span class="n">get_y_rotation_matrix</span><span class="p">(</span><span class="n">pitch</span><span class="p">)</span>
+    <span class="n">z_rotate</span> <span class="o">=</span> <span class="n">get_z_rotation_matrix</span><span class="p">(</span><span class="n">yaw</span><span class="p">)</span>
+    <span class="c1"># Translate</span>
+    <span class="n">translate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">translate</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">translation</span><span class="p">)</span>
+    <span class="c1"># Affline transformation =&gt; 4x4 matrix</span>
+    <span class="n">transformation_matrix</span> <span class="o">=</span> <span class="n">translate</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">reflect</span><span class="p">)</span> <span class="o">@</span> <span class="n">x_rotate</span> <span class="o">@</span> <span class="n">y_rotate</span> <span class="o">@</span> <span class="n">z_rotate</span> 
+    <span class="k">return</span> <span class="n">transformation_matrix</span> </div>
+
+<div class="viewcode-block" id="make_homogenous"><a class="viewcode-back" href="../../root-system-lib/spatial.html#root_system_lib.spatial.make_homogenous">[docs]</a><span class="k">def</span> <span class="nf">make_homogenous</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds an additional &#39;W&#39; dimension of ones to the matrix.</span>
+<span class="sd">    Performs a conversion from Cartesian coordinates to homogenous coordinates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    --------------</span>
+<span class="sd">    matrix: (n, d) float</span>
+<span class="sd">        The matrix with Cartesian coordinates.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ---------</span>
+<span class="sd">    homogenous : (n, d + 1) float</span>
+<span class="sd">        The homogenous matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">ones_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">homogenous_coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">matrix</span><span class="p">,</span> <span class="n">ones_matrix</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">return</span> <span class="n">homogenous_coordinates</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Root System Generator  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">root_system_lib.spatial</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, James Bristow.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
+    </div>
+  </body>
+</html>
