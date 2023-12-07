@@ -81,7 +81,8 @@ if __name__ == "__main__":
 
     # Root
     ROOT_STATS = CONFIG.split("root_stats", ",")
-
+    STATS_LIST = [pair.split('=')[0] for pair in ROOT_STATS]
+    print(STATS_LIST)
     # Soil
     SOIL_BLOCK_SIZE = CONFIG.get("sblock_size")
 
@@ -100,45 +101,71 @@ if __name__ == "__main__":
         "y_locations": [0.3, 0.9, 1.2],  # Example y coordinates
         "x_tolerance": 0.2,  # Example tolerance for x
         "depth_interval": 0.3,  # Example depth interval in meters
-        "ROOT_TYPE": "1,2"
+        "ROOT_GROUP": ""
     }
 
 ##########################################################################################################
 ### Main
 ##########################################################################################################
 
-def gen_summary_stats(df: pd.DataFrame, col_stats_pairs: list, root_stats_map: dict, col_list: list, kwargs_map: dict) -> pd.DataFrame:
-    root_stat_map = {}
-    for stat, col in col_stats_pairs:
-        kwargs_map[f"{stat}_col"] = col
-        root_stats = exec_root_stats_map(df, root_stats_map, [stat], kwargs_map)[stat]
-        print(f"Debug: root_stats for {stat} is of type {type(root_stats)} and has content {root_stats}")
-        # Check if the stat is for 'calc_rld_and_sum_for_multiple_locations'
-        if stat == 'rld_for_locations':
-            return root_stats  # Directly return the result for this specific stat
+# def gen_summary_stats(df: pd.DataFrame, col_stats_pairs: list, root_stats_map: dict, col_list: list, kwargs_map: dict) -> pd.DataFrame:
+#     root_stat_map = {}
+#     for stat, col in col_stats_pairs:
+#         kwargs_map[f"{stat}_col"] = col
+#         root_stats = exec_root_stats_map(df, root_stats_map, [stat], kwargs_map)[stat]
+#         print(f"Debug: root_stats for {stat} is of type {type(root_stats)} and has content {root_stats}")
+#         # Check if the stat is for 'calc_rld_and_sum_for_multiple_locations'
+#         if stat == 'rld_for_locations':
+#             return root_stats  # Directly return the result for this specific stat
 
-        # Existing logic for other stats
-        for i in range(root_stats.shape[0]):
-            root_stat_map[f"{col}_{stat}_var_{i + 1}"] = pd.Series(root_stats[i])
+#         # Existing logic for other stats
+#         for i in range(root_stats.shape[0]):
+#             root_stat_map[f"{col}_{stat}_var_{i + 1}"] = pd.Series(root_stats[i])
 
-    for col in col_list:
-        df_value = df[col].unique() 
-        root_stat_map[col] = pd.Series(df_value)
+#     for col in col_list:
+#         df_value = df[col].unique() 
+#         root_stat_map[col] = pd.Series(df_value)
    
-    root_stats_df = pd.DataFrame(root_stat_map)
-    return root_stats_df
+#     root_stats_df = pd.DataFrame(root_stat_map)
+#     return root_stats_df
+
+def gen_summary_stats(df, stats_list, root_stats_map, kwargs_map):
+    for stat in stats_list:
+        if stat == 'rld_for_locations':
+            # Special handling for 'rld_for_locations'
+            # exec_root_stats_map returns the DataFrame directly for this stat
+            return exec_root_stats_map(df, root_stats_map, [stat], kwargs_map)
+
+    # Calculate other statistics and store results in a dictionary
+    stats_results = {}
+    for stat in stats_list:
+        stats_results[stat] = exec_root_stats_map(df, root_stats_map, [stat], kwargs_map)[stat]
+
+    return stats_results
+
+
+def apply_gen_summary_stats(df, stats_list, root_stats_map, kwargs_map):
+    return gen_summary_stats(df, STATS_LIST, root_stats_map, KWARGS_MAP)
+
+
 
 def main() -> None:    
     df = pd.read_csv(OBS_FILE)
     root_stats_map, _ = get_root_stats_map()
-    col_stats_pairs = [ stat.split("=") for stat in ROOT_STATS ]
-
+    # col_stats_pairs = [ stat.split("=") for stat in ROOT_STATS ]
+   
     if CONFIG.get_as("enable_group_by", bool) and len(GROUP_BY) > 0:
         df = df.groupby(GROUP_BY)
-        df = df.apply(gen_summary_stats, col_stats_pairs, root_stats_map, COL_LIST, KWARGS_MAP) 
+        # df = df.apply(gen_summary_stats, col_stats_pairs, root_stats_map, COL_LIST, KWARGS_MAP) 
+        df = apply_gen_summary_stats(df, STATS_LIST, root_stats_map, KWARGS_MAP)
     else:
-        df = gen_summary_stats(df, col_stats_pairs, root_stats_map, COL_LIST, KWARGS_MAP)
+        # df = gen_summary_stats(df, col_stats_pairs, root_stats_map, COL_LIST, KWARGS_MAP)
+        df = apply_gen_summary_stats(df, STATS_LIST, root_stats_map, KWARGS_MAP)
 
+    # Convert 'depth_bin' column to string if it exists
+    if 'depth_bin' in df.columns:
+        df['depth_bin'] = df['depth_bin'].astype(str)
+        
     config_yaml: str = path_join(DIR, "root_config.yaml")
     CONFIG.to_yaml(config_yaml)
     print(f"Configuration written to {config_yaml}")

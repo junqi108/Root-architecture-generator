@@ -68,7 +68,7 @@ def root_cum_sum(coord: np.array, bins = 10) -> np.array:
 
 def calc_rld_and_sum_for_multiple_locations(df: pd.DataFrame, x_locations: list, y_locations: list, 
                                             x_tolerance: float, depth_interval: float = 0.3, 
-                                            ROOT_GROUP: str = "1,2"):
+                                            ROOT_GROUP: str = None):
     """
     Calculate the root length density (RLD) and sum of root length for multiple x, y locations
     in the grid, for every specified depth interval.
@@ -85,8 +85,8 @@ def calc_rld_and_sum_for_multiple_locations(df: pd.DataFrame, x_locations: list,
         The tolerance level to consider for the location match.
     depth_interval : float
         The depth interval in meters for binning the z-axis.
-    ROOT_TYPE : str
-        Comma-separated string of root types to include in the calculation.
+    ROOT_GROUP : str, optional
+        Comma-separated string of root types to include in the calculation. If None, grouping by root type is skipped.
 
     Returns
     -------
@@ -94,29 +94,24 @@ def calc_rld_and_sum_for_multiple_locations(df: pd.DataFrame, x_locations: list,
         DataFrame with x, y coordinates, depth bins, and corresponding RLD and sum of root length.
     """
     all_rld_dfs = []
-    root_groups = [int(rt) for rt in ROOT_GROUP.split(',')]
+    root_groups = [int(rt) for rt in ROOT_GROUP.split(',')] if ROOT_GROUP else [None]
     global_max_depth = df['z'].abs().max()  # Determine global max depth
 
-    print(df.columns)
     for x_location, y_location in zip(x_locations, y_locations):
         for root_group in root_groups:
+            # Define the query for filtering DataFrame based on root_group
+            root_group_query = (df['root_type'] == root_group) if root_group is not None else pd.Series([True] * len(df))
+
             df_location = df[
                 (df['x'] >= (x_location - x_tolerance)) & 
                 (df['x'] <= (x_location + x_tolerance)) & 
                 (df['y'] >= (y_location - depth_interval/2)) & 
                 (df['y'] <= (y_location + depth_interval/2)) &
-                (df['root_type'] == root_group)
+                root_group_query
             ].copy()
 
             df_location['z'] = df_location['z'].abs()
             max_depth = global_max_depth
-
-            # Use global max depth if specific max depth is NaN
-            if np.isnan(max_depth) or np.isinf(max_depth) or max_depth <= 0:
-                print(f"Using global max depth for x: {x_location}, y: {y_location}, root_group: {root_group}")
-                max_depth = global_max_depth
-
-            print(f"Max depth for x: {x_location}, y: {y_location}, root_group: {root_group} is {max_depth}")
             depth_bins = np.arange(0, max_depth + depth_interval, depth_interval)
 
             df_location['depth_bin'] = pd.cut(df_location['z'], bins=depth_bins, include_lowest=True)
@@ -125,10 +120,11 @@ def calc_rld_and_sum_for_multiple_locations(df: pd.DataFrame, x_locations: list,
             rld_df['sum_root_length'] = rld_df['sum_root_length']
             rld_df['rld'] = rld_df['sum_root_length'] / (depth_interval * 100 * 2 * x_tolerance * 100 * 2 * x_tolerance * 100)
 
-            # Add x, y location, and root type to the DataFrame
+            # Add x, y location, and optionally root type to the DataFrame
             rld_df['x_location'] = x_location
             rld_df['y_location'] = y_location
-            rld_df['root_type'] = root_group
+            if root_group is not None:
+                rld_df['root_type'] = root_group
 
             all_rld_dfs.append(rld_df)
 
