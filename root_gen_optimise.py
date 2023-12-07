@@ -39,7 +39,7 @@ def get_parser():
     # Optuna
     add_argument(parser, "--experiment_name", "root_gen_optimise", "The optimisation experiment name", str)
     add_argument(parser, "--sampler", "tpes", "The optimisation sampling algorithm", str, choices = ["tpes", "cmaes", "nsga", "motpes"])
-    add_argument(parser, "--n_trials", 100, "The number of optimisation trials to perform")
+    add_argument(parser, "--n_trials", 1000, "The number of optimisation trials to perform")
     add_argument(parser, "--n_jobs", -1, "The number of trials to run in parallel")
     add_argument(parser, "--gc_after_trial", 0, "Perform garbage collection after each trial", choices = [0, 1])
 
@@ -76,27 +76,27 @@ def get_parser():
     add_argument(parser, "--root_stats", "rld_for_locations", "A comma-delimited list of simulated and real root statistics to compare", str)
     add_argument(parser, "--col_stats_map", None, "A comma-delimited list of mapped columns and statistics", str)
     add_argument(parser, "--min_order", 3, "The minimum root organ order")
-    add_argument(parser, "--max_order", 4, "The maximum root organ order")
+    add_argument(parser, "--max_order", 6, "The maximum root organ order")
     add_argument(parser, "--origin_min", 1e-2, "The minimum distance of the initial primary root from the origin (cm)", float)
     add_argument(parser, "--origin_max", 1e-1, "The maximum distance of the initial primary root from the origin (cm)", float)
     add_argument(parser, "--r_ratio", 0.5, "Ratio of fine roots to structural roots based upon overall root diameter", float)
-    add_argument(parser, "--froot_threshold", 1.5, "Threshold for classifying a root as a fine root, rather than a structural root (mm)", float)
+    add_argument(parser, "--froot_threshold", 2, "Threshold for classifying a root as a fine root, rather than a structural root (mm)", float)
     add_argument(parser, "--root_type", 1, "The root type to calculate summary statistics for", type=str, choices=ROOT_TYPES)
 
     ## Primary
     add_argument(parser, "--min_rnum_out", 8, "The minimum number of outer primary roots to be generated")
-    add_argument(parser, "--max_rnum_out", 10, "The maximum number of outer primary roots to be generated")
+    add_argument(parser, "--max_rnum_out", 12, "The maximum number of outer primary roots to be generated")
     add_argument(parser, "--min_rnum_in", 6, "The minimum number of inner primary roots to be generated")
-    add_argument(parser, "--max_rnum_in", 8, "The maximum number of inner primary roots to be generated")
+    add_argument(parser, "--max_rnum_in", 10, "The maximum number of inner primary roots to be generated")
 
     ### Size
     add_argument(parser, "--min_prlength", 20, "The minimum length of each primary root (cm)", float)
-    add_argument(parser, "--max_prlength", 30, "The maximum length of each primary root (cm)", float)
+    add_argument(parser, "--max_prlength", 40, "The maximum length of each primary root (cm)", float)
     add_argument(parser, "--prlength_var", 3, "The variance for the interval of the length of each primary root (cm)", float)
 
     ## Secondary
     add_argument(parser, "--srnum_min", 2, "The minimum number of secondary roots to be generated")
-    add_argument(parser, "--srnum_max", 4, "The maximum number of secondary roots to be generated")
+    add_argument(parser, "--srnum_max", 10, "The maximum number of secondary roots to be generated")
     add_argument(parser, "--srnum_var", 1, "The variance for the interval of the number of secondary roots to be generated")
     add_argument(parser, "--min_snum_growth", 0.4, "The minimum growth rate for the number of secondary roots per root order")
     add_argument(parser, "--max_snum_growth", 0.6, "The maximum growth rate for the number of secondary roots per root order")
@@ -108,7 +108,7 @@ def get_parser():
 
     # Segments
     add_argument(parser, "--min_snum", 10, "The minimum number of segments per root")
-    add_argument(parser, "--max_snum", 15, "The maximum number of segments per root")
+    add_argument(parser, "--max_snum", 30, "The maximum number of segments per root")
     add_argument(parser, "--fix_seg", 0, "Use a fixed segment size for each root", int, choices = [0, 1])
     add_argument(parser, "--min_length_reduction", 0.4, "The minimum root length reduction factor", float)
     add_argument(parser, "--max_length_reduction", 0.6, "The maximum root length reduction factor", float)
@@ -226,12 +226,13 @@ if __name__ == "__main__":
         "soil_block_size": SOIL_BLOCK_SIZE,
         "as_scalar": True,
         "values_only": False,
-        "x_locations": [0.3, 0.8, 1.5],  # Example x coordinates
-        "y_locations": [0.3, 0.9, 1.2],  # Example y coordinates
+        "x_locations": [0.1],  # Example x coordinates
+        "y_locations": [1.5],  # Example y coordinates
         "x_tolerance": 0.2,  # Example tolerance for x
-        "depth_interval": 0.3,  # Example depth interval in meters
-        "ROOT_GROUP": "1"
+        "depth_interval": 0.1,  # Example depth interval in meters
+        "ROOT_GROUP": ""
     }
+
 
 ##########################################################################################################
 ### Main

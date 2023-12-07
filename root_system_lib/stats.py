@@ -681,24 +681,26 @@ def calculate_objectives(obs_statistics_df, sim_statistics_df, root_stats, compu
                 objectives.append(root_distance)
 
     return objectives
-
-def calculate_objective(obs_statistics_df, sim_statistics_df, compute_distance_func):
+def calculate_objective(obs_statistics_df, sim_statistics_df, compute_distance_func, include_root_type=True):
     # Assuming 'depth_bin' is in the DataFrame, cast it to string type
     obs_statistics_df['depth_bin'] = obs_statistics_df['depth_bin'].astype(str)
     sim_statistics_df['depth_bin'] = sim_statistics_df['depth_bin'].astype(str)
 
-    # Calculate objectives based on 'depth_bin' and 'root_type'
-    # Assuming that 'root_type' is also a column in both DataFrames
-    grouped_obs = obs_statistics_df.groupby(['depth_bin', 'root_type'])
-    grouped_sim = sim_statistics_df.groupby(['depth_bin', 'root_type'])
+    # Group by 'depth_bin' and optionally by 'root_type'
+    if include_root_type and 'root_type' in obs_statistics_df.columns:
+        grouped_obs = obs_statistics_df.groupby(['depth_bin', 'root_type'])
+        grouped_sim = sim_statistics_df.groupby(['depth_bin', 'root_type'])
+    else:
+        grouped_obs = obs_statistics_df.groupby(['depth_bin'])
+        grouped_sim = sim_statistics_df.groupby(['depth_bin'])
     
     # Initialize an empty list to hold the objective scores
     objective_scores = []
 
-    # Iterate over unique combinations of 'depth_bin' and 'root_type'
-    for (depth_bin, root_type), obs_group in grouped_obs:
-        if (depth_bin, root_type) in grouped_sim.groups:
-            sim_group = grouped_sim.get_group((depth_bin, root_type))
+    # Iterate over unique combinations of 'depth_bin' and optionally 'root_type'
+    for group_keys, obs_group in grouped_obs:
+        if group_keys in grouped_sim.groups:
+            sim_group = grouped_sim.get_group(group_keys)
             # Calculate the objective score using a custom distance function
             distance = compute_distance_func(obs_group['rld'], sim_group['rld'])
             objective_scores.append(distance)

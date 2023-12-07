@@ -97,10 +97,10 @@ if __name__ == "__main__":
         "soil_block_size": SOIL_BLOCK_SIZE,
         "as_scalar": True,
         "values_only": False,
-        "x_locations": [0.3, 0.8, 1.5],  # Example x coordinates
-        "y_locations": [0.3, 0.9, 1.2],  # Example y coordinates
+        "x_locations": [0.1],  # Example x coordinates
+        "y_locations": [1.5],  # Example y coordinates
         "x_tolerance": 0.2,  # Example tolerance for x
-        "depth_interval": 0.3,  # Example depth interval in meters
+        "depth_interval": 0.1,  # Example depth interval in meters
         "ROOT_GROUP": ""
     }
 
@@ -165,7 +165,7 @@ def main() -> None:
     # Convert 'depth_bin' column to string if it exists
     if 'depth_bin' in df.columns:
         df['depth_bin'] = df['depth_bin'].astype(str)
-        
+
     config_yaml: str = path_join(DIR, "root_config.yaml")
     CONFIG.to_yaml(config_yaml)
     print(f"Configuration written to {config_yaml}")
