@@ -22,7 +22,8 @@ from root_system_lib.distances import ROOT_DISTANCES
 from root_system_lib.parameters import DeVriesParameters
 from root_system_lib.random_generation import get_rng
 from root_system_lib.root import RootNodeMap
-from root_system_lib.stats import exec_root_stats_map, read_stats_data, get_root_stats_map
+from root_system_lib.stats import exec_root_stats_map, read_stats_data, get_root_stats_map,calculate_objectives, distance_fun,read_simulated_stats_file
+
 
 ##########################################################################################################
 ### Parameters
@@ -38,7 +39,7 @@ def get_parser():
     # Optuna
     add_argument(parser, "--experiment_name", "root_gen_optimise", "The optimisation experiment name", str)
     add_argument(parser, "--sampler", "tpes", "The optimisation sampling algorithm", str, choices = ["tpes", "cmaes", "nsga", "motpes"])
-    add_argument(parser, "--n_trials", 5, "The number of optimisation trials to perform")
+    add_argument(parser, "--n_trials", 1, "The number of optimisation trials to perform")
     add_argument(parser, "--n_jobs", -1, "The number of trials to run in parallel")
     add_argument(parser, "--gc_after_trial", 0, "Perform garbage collection after each trial", choices = [0, 1])
 
@@ -61,8 +62,9 @@ def get_parser():
 
     # Input 
     add_argument(parser, "--obs_file", "data/root_obs.csv", "The observed root data file name", str)
-    add_argument(parser, "--stats_file", "data/root_stats.csv", "The observed root statistics file name", str)
-    add_argument(parser, "--calc_statistics", 1, "Calculate summary statistics from the observed root data", choices = [0, 1])
+    add_argument(parser, "--stats_file", "data/summary_stats/root_stats.csv", "The observed root statistics file name", str)
+    # add_argument(parser, "--stats_file", "data/root_stats.csv", "The observed root statistics file name", str)
+    add_argument(parser, "--calc_statistics", 0, "Calculate summary statistics from the observed root data", choices = [0, 1])
 
     # Ouput
     add_argument(parser, "--dir", "data/optimise", "Output directory", str)
@@ -71,7 +73,7 @@ def get_parser():
     add_argument(parser, "--bins", 10, "Number of bins when binning root data")
 
     # Roots
-    add_argument(parser, "--root_stats", "depth_cum", "A comma-delimited list of simulated and real root statistics to compare", str)
+    add_argument(parser, "--root_stats", "rld_for_locations", "A comma-delimited list of simulated and real root statistics to compare", str)
     add_argument(parser, "--col_stats_map", None, "A comma-delimited list of mapped columns and statistics", str)
     add_argument(parser, "--min_order", 3, "The minimum root organ order")
     add_argument(parser, "--max_order", 4, "The maximum root organ order")
@@ -79,7 +81,7 @@ def get_parser():
     add_argument(parser, "--origin_max", 1e-1, "The maximum distance of the initial primary root from the origin (cm)", float)
     add_argument(parser, "--r_ratio", 0.5, "Ratio of fine roots to structural roots based upon overall root diameter", float)
     add_argument(parser, "--froot_threshold", 1.5, "Threshold for classifying a root as a fine root, rather than a structural root (mm)", float)
-    add_argument(parser, "--root_type", None, "The root type to calculate summary statistics for", str, choices = ROOT_TYPES)
+    add_argument(parser, "--root_type", 1, "The root type to calculate summary statistics for", type=str, choices=ROOT_TYPES)
 
     ## Primary
     add_argument(parser, "--min_rnum_out", 8, "The minimum number of outer primary roots to be generated")
@@ -223,7 +225,12 @@ if __name__ == "__main__":
         "rtd": ROOT_PARAMS.rtd,
         "soil_block_size": SOIL_BLOCK_SIZE,
         "as_scalar": True,
-        "values_only": True
+        "values_only": False,
+        "x_locations": [0.3, 0.8, 1.5],  # Example x coordinates
+        "y_locations": [0.3, 0.9, 1.2],  # Example y coordinates
+        "x_tolerance": 0.2,  # Example tolerance for x
+        "depth_interval": 0.3,  # Example depth interval in meters
+        "ROOT_GROUP": "1"
     }
 
 ##########################################################################################################
@@ -266,13 +273,20 @@ def objective(trial: optuna.trial.Trial, compute_distance: Callable, root_stats_
     sim_df = root_map.to_dataframe(ROUND)
 
     objectives = []
-    sim_statistics = exec_root_stats_map(sim_df, root_stats_map, ROOT_STATS, kwargs_map, ROOT_TYPE)
-    for k, obs_statistic in obs_statistics.items():
-        sim_statistic = sim_statistics[k]
-        root_distance = compute_distance(e, obs_statistic, sim_statistic)
-        objectives.append(root_distance)
-        
+    
+    sim_statistics = exec_root_stats_map(sim_df, root_stats_map, ROOT_STATS, kwargs_map)
+
+    root_distance = calculate_objectives(obs_statistics, sim_statistics, ROOT_STATS, distance_fun)
+    objectives.append(root_distance)
+    print(objectives)
     return objectives
+    
+
+
+# Usage
+# Assuming obs_statistics and sim_statistics are dictionaries or DataFrames and ROOT_STATS is a list of statistics
+# objectives = calculate_objectives(obs_statistics, sim_statistics, ROOT_STATS, compute_distance)
+
 
 def get_sampler(samplers: dict, sampler_key: str, seed: int):
     """Get Optuna sampler."""
@@ -322,9 +336,19 @@ def get_sampler(samplers: dict, sampler_key: str, seed: int):
     sampler = samplers.get(sampler_key)(**kwargs)
     return sampler
 
-def main() -> None:    
-    obs_statistics, _ = read_stats_data(CONFIG.get_as("calc_statistics", bool), OBS_FILE, STATS_FILE, ROOT_STATS, KWARGS_MAP, 
-        COL_STATS_MAP, ROOT_TYPE)    
+def main() -> None:
+    if "rld_for_locations" in ROOT_STATS:
+        # If ROOT_STATS is 'rld_for_locations', directly read the simulated statistics file
+        print("Reading simulated stats from:", STATS_FILE, ROOT_STATS)
+        df = pd.read_csv(STATS_FILE)
+        print(df)  # Print the DataFrame
+        obs_statistics = read_simulated_stats_file(STATS_FILE)
+    else:
+        # Otherwise, use the read_stats_data function to process other types of statistics
+        obs_statistics, _ = read_stats_data(CONFIG.get_as("calc_statistics", bool), 
+                                            OBS_FILE, STATS_FILE, ROOT_STATS, KWARGS_MAP, 
+                                            COL_STATS_MAP, ROOT_TYPE)
+
     if len(obs_statistics) > 0:
         directions = ["minimize" for _ in obs_statistics]
     else:

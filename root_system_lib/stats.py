@@ -105,7 +105,7 @@ def calc_rld_and_sum_for_multiple_locations(df: pd.DataFrame, x_locations: list,
                 (df['x'] <= (x_location + x_tolerance)) & 
                 (df['y'] >= (y_location - depth_interval/2)) & 
                 (df['y'] <= (y_location + depth_interval/2)) &
-                (df['Root_type'] == root_group)
+                (df['root_type'] == root_group)
             ].copy()
 
             df_location['z'] = df_location['z'].abs()
@@ -128,7 +128,7 @@ def calc_rld_and_sum_for_multiple_locations(df: pd.DataFrame, x_locations: list,
             # Add x, y location, and root type to the DataFrame
             rld_df['x_location'] = x_location
             rld_df['y_location'] = y_location
-            rld_df['root_group'] = root_group
+            rld_df['root_type'] = root_group
 
             all_rld_dfs.append(rld_df)
 
@@ -583,91 +583,150 @@ def get_root_stats_map() -> tuple:
     available_stats = list(root_stats_map.keys())
     return root_stats_map, available_stats
 
-def exec_root_stats_map(df, root_stats_map: Dict[str, dict], root_stats: List[str], kwargs_map: dict, root_type: str = None) -> dict:
-    """
-    Execute root statistic functions, pass arguments from the kwargs map, and return the mapped results. 
-
-    Parameters
-    --------------
-    df: DataFrame
-        The root dataframe.
-    root_stats_map: dict
-        The dictionary of available root stats.
-    root_stats: list
-        The list of requested root stats.
-    kwargs_map: dict
-        A map of arguments passed to each statistic.
-    root_type: str
-        The root type classification: Fine or structural roots.
-
-    Returns
-    ---------
-    map: dict
-        The map of calculated root statistics.
-    """
+def exec_root_stats_map(df, root_stats_map, root_stats, kwargs_map):
     func_results = {}
 
-    if root_type:
-        root_type_id = ROOT_TYPES.index(root_type) + 1
-        df = df.query(f"root_type == {root_type_id}")
-
     for root_stat in root_stats:
-        # Get root stats definition from root_stats_map - get_root_stats_map()
+        # Get root stats definition from root_stats_map
         stats_definition = root_stats_map.get(root_stat)
-        if stats_definition is None:
-            raise Exception(f"Root statistic does not exist: {root_stat}")
-        # Build kwargs for root stats function
-        kwargs = {k: kwargs_map.get(k) for k in stats_definition["kwarg_keys"]}
-        # Call function and add results
-        func_results[root_stat] = stats_definition["func"](df, **kwargs)
-    return func_results
-        
-def read_stats_data(calc_statistics: bool, obs_file: str, stats_file: str, root_stats_list: list, kwargs_map: dict, 
-    col_stats_map: list = None, root_type: str = None):
-    """
-    Read either an observations file or stats file. Converts the resulting dataframe into a dictionary.
-    
-    Parameters
-    --------------
-    calc_statistics: bool
-        Whether or not to calculate root statistics from the observation file.
-    obs_file: str
-        The file path of the observation CSV file.
-    stats_file: str
-        The file path of the root statistics CSV file.
-    root_stats_list: list
-        The list of requested root stats.
-    kwargs_map: dict
-        A map of arguments passed to each statistic.
-    col_stats_map: list
-        A list of root statistics and their mapped column names.
-    root_type: str
-        The root type classification: Fine or structural roots.
 
-    Returns
-    ---------
-    map: dict
-        The map of calculated root statistics.
+        if root_stat == 'rld_for_locations':
+            # If root_stat is 'rld_for_locations', process it separately
+            func = stats_definition["func"]
+            kwargs = {k: kwargs_map.get(k) for k in stats_definition["kwarg_keys"]}
+            # Call the function and store the result
+            result = func(df, **kwargs)
+            # Check if the result is already a DataFrame
+            if not isinstance(result, pd.DataFrame):
+                raise TypeError(f"The result of '{root_stat}' should be a pandas DataFrame.")
+            # Return the DataFrame directly
+            return result
+        elif stats_definition is None:
+            raise ValueError(f"Root statistic does not exist: {root_stat}")
+        else:
+            # For other statistics, build kwargs and call the function
+            kwargs = {k: kwargs_map.get(k) for k in stats_definition["kwarg_keys"]}
+            func_results[root_stat] = stats_definition["func"](df, **kwargs)
+
+    # Convert func_results to a DataFrame if needed, or return as is if it's not 'rld_for_locations'
+    return pd.DataFrame(func_results) if func_results else None
+
+def read_stats_data(calc_statistics: bool, obs_file: str, stats_file: str,
+                    root_stats_list: list, kwargs_map: dict, 
+                    col_stats_map: list = None, root_type: str = None):
+    """
+    Read either an observations file or stats file. Converts the resulting dataframe into a dictionary or dataframe.
+    
+    ... [existing docstring content] ...
     """
     root_stats_map, _ = get_root_stats_map()
 
     if calc_statistics:
         obs_df = pd.read_csv(obs_file)
-        obs_statistics = exec_root_stats_map(obs_df, root_stats_map, root_stats_list, kwargs_map, root_type)
+        for stat in root_stats_list:
+            if stat == 'rld_for_locations':
+                # If rld_for_locations is in the list, process and return its DataFrame directly
+                func = root_stats_map[stat]["func"]
+                kwargs = {k: kwargs_map.get(k) for k in root_stats_map[stat]["kwarg_keys"]}
+                return func(obs_df, **kwargs)
+            else:
+                # For other stats, calculate as before
+                kwargs = {k: kwargs_map.get(k) for k in root_stats_map[stat]["kwarg_keys"]}
+                root_stats_map[stat]["func"](obs_df, **kwargs)
     else:
         stats_df = pd.read_csv(stats_file)
         obs_statistics = {}
-
+        
+        # If col_stats_map is None, create a list of column-statistic mappings from the DataFrame
         if col_stats_map is None:
-            for k in root_stats_list:
-                stat_values = stats_df[k].dropna().values
-                obs_statistics[k] = stat_values
-        else:
-            col_stats_list = [ col_stat.split("=") for col_stat in col_stats_map.split(",") ]
-            col_stats_dict = { k: v for k, v in col_stats_list }
-            for k in root_stats_list:
-                column_name = col_stats_dict[k]
-                stat_values = stats_df[column_name].dropna().values           
-                obs_statistics[k] = stat_values
+            col_stats_map = [f"{col}={col}" for col in stats_df.columns]
+
+        col_stats_dict = {}
+        for col_stat in col_stats_map:
+            parts = col_stat.split("=")
+            if len(parts) == 2:
+                col_stats_dict[parts[0]] = parts[1]
+            else:
+                # Handle the case where there is no "=" in the string
+                col_stats_dict[parts[0]] = parts[0]  # Map the key to itself
+
+        for stat in root_stats_list:
+            column_name = col_stats_dict.get(stat)
+            if column_name in stats_df:
+                obs_statistics[stat] = stats_df[column_name].dropna().values
 
     return obs_statistics, root_stats_map
+
+
+# Define your distance computation function (e.g., RMSE, MAE, etc.)
+def distance_fun(observed_values, simulated_values):
+    # Example with Mean Absolute Error (MAE)
+    return np.mean(np.abs(observed_values - simulated_values))
+
+def calculate_objectives(obs_statistics_df, sim_statistics_df, root_stats, compute_distance_func):
+    objectives = []
+
+    # Check if the specific statistic 'rld_for_locations' is the one we're interested in
+    if 'rld_for_locations' in root_stats:
+        # If yes, ensure that 'depth_bin' is a column in both observed and simulated DataFrames
+        if 'depth_bin' in obs_statistics_df.columns and 'depth_bin' in sim_statistics_df.columns:
+            # Calculate the objective for this statistic
+            objective = calculate_objective(obs_statistics_df, sim_statistics_df, compute_distance_func)
+            objectives.append(objective)
+    else:
+        # If not, calculate objectives for all other statistics
+        for k in root_stats:
+            # Make sure the statistic exists as a column in both observed and simulated data
+            if k in obs_statistics_df.columns and k in sim_statistics_df.columns:
+                obs_statistic = obs_statistics_df[k]
+                sim_statistic = sim_statistics_df[k]
+                # Compute the distance for each statistic
+                root_distance = compute_distance_func(obs_statistic, sim_statistic)
+                objectives.append(root_distance)
+
+    return objectives
+
+def calculate_objective(obs_statistics_df, sim_statistics_df, compute_distance_func):
+    # Assuming 'depth_bin' is in the DataFrame, cast it to string type
+    obs_statistics_df['depth_bin'] = obs_statistics_df['depth_bin'].astype(str)
+    sim_statistics_df['depth_bin'] = sim_statistics_df['depth_bin'].astype(str)
+
+    # Calculate objectives based on 'depth_bin' and 'root_type'
+    # Assuming that 'root_type' is also a column in both DataFrames
+    grouped_obs = obs_statistics_df.groupby(['depth_bin', 'root_type'])
+    grouped_sim = sim_statistics_df.groupby(['depth_bin', 'root_type'])
+    
+    # Initialize an empty list to hold the objective scores
+    objective_scores = []
+
+    # Iterate over unique combinations of 'depth_bin' and 'root_type'
+    for (depth_bin, root_type), obs_group in grouped_obs:
+        if (depth_bin, root_type) in grouped_sim.groups:
+            sim_group = grouped_sim.get_group((depth_bin, root_type))
+            # Calculate the objective score using a custom distance function
+            distance = compute_distance_func(obs_group['rld'], sim_group['rld'])
+            objective_scores.append(distance)
+
+    # Sum or average the objective scores as needed
+    total_objective = sum(objective_scores)
+    return total_objective
+
+
+def read_simulated_stats_file(stats_file: str) -> pd.DataFrame:
+    """
+    Read the simulated statistics file and return it as a DataFrame.
+
+    Parameters
+    ----------
+    stats_file : str
+        The file path of the simulated statistics CSV file.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame containing the simulated statistics.
+    """
+    return pd.read_csv(stats_file)
+
+# Example usage:
+# sim_stats_df = read_simulated_stats_file(stats_file="path/to/simulated_stats.csv")
