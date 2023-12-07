@@ -39,7 +39,7 @@ def get_parser():
     # Optuna
     add_argument(parser, "--experiment_name", "root_gen_optimise", "The optimisation experiment name", str)
     add_argument(parser, "--sampler", "tpes", "The optimisation sampling algorithm", str, choices = ["tpes", "cmaes", "nsga", "motpes"])
-    add_argument(parser, "--n_trials", 1, "The number of optimisation trials to perform")
+    add_argument(parser, "--n_trials", 100, "The number of optimisation trials to perform")
     add_argument(parser, "--n_jobs", -1, "The number of trials to run in parallel")
     add_argument(parser, "--gc_after_trial", 0, "Perform garbage collection after each trial", choices = [0, 1])
 
@@ -272,20 +272,13 @@ def objective(trial: optuna.trial.Trial, compute_distance: Callable, root_stats_
     root_map.validate(NO_ROOT_ZONE, validation_pitch, max_attempts)
     sim_df = root_map.to_dataframe(ROUND)
 
-    objectives = []
-    
     sim_statistics = exec_root_stats_map(sim_df, root_stats_map, ROOT_STATS, kwargs_map)
 
     root_distance = calculate_objectives(obs_statistics, sim_statistics, ROOT_STATS, distance_fun)
-    objectives.append(root_distance)
-    print(objectives)
-    return objectives
     
-
-
-# Usage
-# Assuming obs_statistics and sim_statistics are dictionaries or DataFrames and ROOT_STATS is a list of statistics
-# objectives = calculate_objectives(obs_statistics, sim_statistics, ROOT_STATS, compute_distance)
+    
+    return root_distance
+    
 
 
 def get_sampler(samplers: dict, sampler_key: str, seed: int):
@@ -349,10 +342,11 @@ def main() -> None:
                                             OBS_FILE, STATS_FILE, ROOT_STATS, KWARGS_MAP, 
                                             COL_STATS_MAP, ROOT_TYPE)
 
-    if len(obs_statistics) > 0:
-        directions = ["minimize" for _ in obs_statistics]
+    if not obs_statistics.empty:
+        directions = ["minimize"]
     else:
         directions = None
+
 
     sampler = get_sampler(OPTUNA_SAMPLERS, SAMPLER_KEY, SEED)
     if LOAD_OPTIMISER:
@@ -376,19 +370,19 @@ def main() -> None:
     optimiser_dump(study, optimiser_file)
     print(f"Optimiser written to {optimiser_file}")
 
-    if CONFIG.get_as("visualise", bool):
+    # if CONFIG.get_as("visualise", bool):
 
-        def __plot_results(plot_func: Callable, i: int, obs_statistic: str, plot_name: str):
-            plot_func(study, target = lambda t: t.values[i], 
-                target_name = obs_statistic).write_image(f"{DIR}/{obs_statistic}_{plot_name}.png")
+    #     def __plot_results(plot_func: Callable, i: int, obs_statistic: str, plot_name: str):
+    #         plot_func(study, target = lambda t: t.values[i], 
+    #             target_name = obs_statistic).write_image(f"{DIR}/{obs_statistic}_{plot_name}.png")
 
-        for i, obs_statistic in enumerate(obs_statistics):
-            __plot_results(optuna.visualization.plot_contour, i, obs_statistic, "contour")
-            __plot_results(optuna.visualization.plot_edf, i, obs_statistic, "edf")
-            __plot_results(optuna.visualization.plot_optimization_history, i, obs_statistic, "optimization_history")
-            __plot_results(optuna.visualization.plot_parallel_coordinate, i, obs_statistic, "parallel_coordinate")
-            __plot_results(optuna.visualization.plot_param_importances, i, obs_statistic, "param_importances")
-            __plot_results(optuna.visualization.plot_slice, i, obs_statistic, "slice")
+        # for i, obs_statistic in enumerate(obs_statistics):
+        #     __plot_results(optuna.visualization.plot_contour, i, obs_statistic, "contour")
+        #     __plot_results(optuna.visualization.plot_edf, i, obs_statistic, "edf")
+        #     __plot_results(optuna.visualization.plot_optimization_history, i, obs_statistic, "optimization_history")
+        #     __plot_results(optuna.visualization.plot_parallel_coordinate, i, obs_statistic, "parallel_coordinate")
+        #     __plot_results(optuna.visualization.plot_param_importances, i, obs_statistic, "param_importances")
+        #     __plot_results(optuna.visualization.plot_slice, i, obs_statistic, "slice")
 
 if __name__ == "__main__":
     main()
