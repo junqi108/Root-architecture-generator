@@ -65,7 +65,78 @@ def root_cum_sum(coord: np.array, bins = 10) -> np.array:
     pdf = count / sum(count)
     cdf = np.cumsum(pdf)
     cdf = np.insert(cdf, 0, 0)
-    return cdf, bins_count[1:]
+
+def calc_rld_and_sum_for_multiple_locations(df: pd.DataFrame, x_locations: list, y_locations: list, 
+                                            x_tolerance: float, depth_interval: float = 0.3, 
+                                            ROOT_GROUP: str = "1,2"):
+    """
+    Calculate the root length density (RLD) and sum of root length for multiple x, y locations
+    in the grid, for every specified depth interval.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame containing root data with 'x', 'y', and 'length' columns.
+    x_locations : list
+        List of x-coordinates for the locations.
+    y_locations : list
+        List of y-coordinates for the locations.
+    x_tolerance : float
+        The tolerance level to consider for the location match.
+    depth_interval : float
+        The depth interval in meters for binning the z-axis.
+    ROOT_TYPE : str
+        Comma-separated string of root types to include in the calculation.
+
+    Returns
+    -------
+    all_rld_dfs : pd.DataFrame
+        DataFrame with x, y coordinates, depth bins, and corresponding RLD and sum of root length.
+    """
+    all_rld_dfs = []
+    root_groups = [int(rt) for rt in ROOT_GROUP.split(',')]
+    global_max_depth = df['z'].abs().max()  # Determine global max depth
+
+    print(df.columns)
+    for x_location, y_location in zip(x_locations, y_locations):
+        for root_group in root_groups:
+            df_location = df[
+                (df['x'] >= (x_location - x_tolerance)) & 
+                (df['x'] <= (x_location + x_tolerance)) & 
+                (df['y'] >= (y_location - depth_interval/2)) & 
+                (df['y'] <= (y_location + depth_interval/2)) &
+                (df['Root_type'] == root_group)
+            ].copy()
+
+            df_location['z'] = df_location['z'].abs()
+            max_depth = global_max_depth
+
+            # Use global max depth if specific max depth is NaN
+            if np.isnan(max_depth) or np.isinf(max_depth) or max_depth <= 0:
+                print(f"Using global max depth for x: {x_location}, y: {y_location}, root_group: {root_group}")
+                max_depth = global_max_depth
+
+            print(f"Max depth for x: {x_location}, y: {y_location}, root_group: {root_group} is {max_depth}")
+            depth_bins = np.arange(0, max_depth + depth_interval, depth_interval)
+
+            df_location['depth_bin'] = pd.cut(df_location['z'], bins=depth_bins, include_lowest=True)
+            rld_df = df_location.groupby('depth_bin')['length'].agg(['sum']).reset_index()
+            rld_df.rename(columns={'sum': 'sum_root_length'}, inplace=True)
+            rld_df['sum_root_length'] = rld_df['sum_root_length']
+            rld_df['rld'] = rld_df['sum_root_length'] / (depth_interval * 100 * 2 * x_tolerance * 100 * 2 * x_tolerance * 100)
+
+            # Add x, y location, and root type to the DataFrame
+            rld_df['x_location'] = x_location
+            rld_df['y_location'] = y_location
+            rld_df['root_group'] = root_group
+
+            all_rld_dfs.append(rld_df)
+
+    # Combine all results into a single DataFrame
+    all_rld_dfs = pd.concat(all_rld_dfs, ignore_index=True)
+
+    return all_rld_dfs
+
 
 def calc_root_stats(df : pd.DataFrame, out : str, bins: int = 10) -> None:
     """
@@ -504,6 +575,9 @@ def get_root_stats_map() -> tuple:
         "total_diameter" : {"func": calc_root_total_diameter, "kwarg_keys": []},
         "average_length" : {"func": calc_root_average_length, "kwarg_keys": []},
         "average_diameter" : {"func": calc_root_average_diameter, "kwarg_keys": []},
+        "rld_for_locations": {
+        "func": calc_rld_and_sum_for_multiple_locations, 
+        "kwarg_keys": ["x_locations", "y_locations", "x_tolerance", "depth_interval", "ROOT_GROUP"]}
     }
 
     available_stats = list(root_stats_map.keys())

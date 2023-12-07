@@ -13,7 +13,7 @@ from os.path import join as path_join
 from root_system_lib.config import add_argument, Config
 from root_system_lib.parameters import DeVriesParameters
 from root_system_lib.random_generation import get_rng
-from root_system_lib.stats import exec_root_stats_map, get_root_stats_map
+from root_system_lib.stats import exec_root_stats_map, get_root_stats_map, calc_rld_and_sum_for_multiple_locations
 
 ##########################################################################################################
 ### Parameters
@@ -25,24 +25,24 @@ def get_parser():
     )
 
     # Data
-    add_argument(parser, "--obs_file", "data/field/apple_tree_root_data.csv", "The observed root data file name", str)
-    add_argument(parser, "--group_by", "experiment_id,tree_id,age", "A comma-delimited list of column names to group by", str)
-    add_argument(parser, "--enable_group_by", 1, "Enable group by functionality", choices = [0, 1])
+    add_argument(parser, "--obs_file", "data/root_sim/root_sim.csv", "The observed root data file name", str)
+    add_argument(parser, "--group_by", "", "A comma-delimited list of column names to group by", str)
+    add_argument(parser, "--enable_group_by", 0, "Enable group by functionality", choices = [0, 1])
     add_argument(parser, "--copy_cols", 1, "Whether to directly copy columns from the existing dataframe", choices = [0, 1])
-    add_argument(parser, "--col_list", "mean_rld_cm_cm3,total_root_to_1m__kg_per_plant", "A comma-delimited list of column names to group by", str)
+    add_argument(parser, "--col_list", "length", "A comma-delimited list of column names to group by", str)
 
     # Ouput
     add_argument(parser, "--dir", "data/summary_stats", "Output directory", str)
     add_argument(parser, "--out", "root_stats.csv", "Output CSV file name", str)
     add_argument(parser, "--round", 10, "Number of decimal places to round values when writing to file")
     add_argument(parser, "--bins", 10, "Number of bins when binning root data")
-    add_argument(parser, "--by_group", 1, "Create on csv file per group", choices = [0, 1])
+    add_argument(parser, "--by_group", 0, "Create on csv file per group", choices = [0, 1])
 
     # Roots
-    add_argument(parser, "--root_stats", "average_rld_depth=soil_depth_m,depth_cum=soil_depth_m,depth_cum=radial_distance_from_stem_m", "A comma-delimited list of summary statistics mapped to a column name", str)
+    add_argument(parser, "--root_stats", "rld_for_locations=depth_cum_col", "A comma-delimited list of summary statistics mapped to a column name", str)
 
     # Soil
-    add_argument(parser, "--sblock_size", 1, "The (voxel) size of each soil block in cubic-cm", float)
+    add_argument(parser, "--sblock_size", 0.3, "The (voxel) size of each soil block in cubic-cm", float)
 
     # Random 
     add_argument(parser, "--random_seed", None, "The random seed")
@@ -95,7 +95,12 @@ if __name__ == "__main__":
         "rtd": ROOT_PARAMS.rtd,
         "soil_block_size": SOIL_BLOCK_SIZE,
         "as_scalar": True,
-        "values_only": False
+        "values_only": False,
+        "x_locations": [0.3, 0.8, 1.5],  # Example x coordinates
+        "y_locations": [0.3, 0.9, 1.2],  # Example y coordinates
+        "x_tolerance": 0.2,  # Example tolerance for x
+        "depth_interval": 0.3,  # Example depth interval in meters
+        "ROOT_TYPE": "1,2"
     }
 
 ##########################################################################################################
@@ -107,6 +112,12 @@ def gen_summary_stats(df: pd.DataFrame, col_stats_pairs: list, root_stats_map: d
     for stat, col in col_stats_pairs:
         kwargs_map[f"{stat}_col"] = col
         root_stats = exec_root_stats_map(df, root_stats_map, [stat], kwargs_map)[stat]
+        print(f"Debug: root_stats for {stat} is of type {type(root_stats)} and has content {root_stats}")
+        # Check if the stat is for 'calc_rld_and_sum_for_multiple_locations'
+        if stat == 'rld_for_locations':
+            return root_stats  # Directly return the result for this specific stat
+
+        # Existing logic for other stats
         for i in range(root_stats.shape[0]):
             root_stat_map[f"{col}_{stat}_var_{i + 1}"] = pd.Series(root_stats[i])
 
