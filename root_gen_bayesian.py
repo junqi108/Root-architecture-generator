@@ -235,6 +235,7 @@ def root_sim(max_order: int, num_segs: int, length_reduction: float, snum_growth
     root_map.position_primary_roots(proot_num, ORIGIN_NOISE_RANGE)
     root_map.validate(NO_ROOT_ZONE, validation_pitch, max_attempts)
     sim_df = root_map.to_dataframe(ROUND)
+    
     sim_statistic = exec_root_stats_map(sim_df, ROOT_STATS_MAP, ROOT_STAT, KWARGS_MAP)
      # Create a mapping from 'depth_bin' to integer indices
     depth_bin_mapping = {depth_bin: idx for idx, depth_bin in enumerate(sim_statistic['depth_bin'].unique())}
@@ -244,7 +245,9 @@ def root_sim(max_order: int, num_segs: int, length_reduction: float, snum_growth
 
     # Convert the DataFrame to a NumPy array
     sim_statistic_values = sim_statistic.to_numpy()
+    
     print(sim_statistic_values)
+    
     return sim_statistic_values
 
 def fit_model(compute_distance: Callable, obs_statistic: pd.DataFrame, e: float):
