@@ -46,7 +46,7 @@ def get_parser():
     add_argument(parser, "--steps", 2, "The number of steps for each Markov Chain")
     add_argument(parser, "--chains", 1, "The number of chains to sample. Running independent chains is important for some convergence statistics")
     add_argument(parser, "--parallel", 0, "Distribute computations across cores if the number of cores is larger than 1", choices = [0, 1])
-    add_argument(parser, "--distance", "customized", "The data dissimilarity metric", str, choices = ["euclidean"])
+    add_argument(parser, "--distance", "euclidean", "The data dissimilarity metric", str, choices = ["euclidean"])
 
     # de Vries et al. (2021) Mycorrhizal associations change root functionality...
     add_argument(parser, "--species", 0, "The species associated with the root system", choices = [0, 1])
@@ -237,18 +237,28 @@ def root_sim(max_order: int, num_segs: int, length_reduction: float, snum_growth
     sim_df = root_map.to_dataframe(ROUND)
     
     sim_statistic = exec_root_stats_map(sim_df, ROOT_STATS_MAP, ROOT_STAT, KWARGS_MAP)
-     # Create a mapping from 'depth_bin' to integer indices
-    depth_bin_mapping = {depth_bin: idx for idx, depth_bin in enumerate(sim_statistic['depth_bin'].unique())}
-
-    # Replace 'depth_bin' with its corresponding index
-    sim_statistic['depth_bin'] = sim_statistic['depth_bin'].map(depth_bin_mapping)
-
+    # Check if 'depth_bin' column exists in obs_statistics
+    if 'depth_bin' in sim_statistic.columns:
+        # Create a mapping from 'depth_bin' to integer indices
+        depth_bin_mapping = {depth_bin: idx for idx, depth_bin in enumerate(sim_statistic['depth_bin'].unique())}
+        # Add a new column for depth bin indices to the DataFrame
+        sim_statistic['depth_bin_idx'] = sim_statistic['depth_bin'].map(depth_bin_mapping)
+        # Filter the DataFrame for rows where depth bin index is between 1 and 10
+        filtered_statistics = sim_statistic[(sim_statistic['depth_bin_idx'] >= 0) & (sim_statistic['depth_bin_idx'] <= 9)]
+    else:
+        print("'depth_bin' column not found in obs_statistics")
+        # Handle the case where 'depth_bin' column is not present
+        # For example, you might choose to use the entire DataFrame or take other actions
+        filtered_statistics = sim_statistic
+        
     # Convert the DataFrame to a NumPy array
-    sim_statistic_values = sim_statistic.to_numpy()
+    sim_values = filtered_statistics['rld'].to_numpy()
     
-    print(sim_statistic_values)
+    # try just to use the rld column
+
+    print(sim_values)
     
-    return sim_statistic_values
+    return sim_values
 
 def fit_model(compute_distance: Callable, obs_statistic: pd.DataFrame, e: float):
     # Specification for ABC-SMC model.
@@ -325,15 +335,23 @@ def main() -> None:
         
     # obs_statistic = obs_statistics.get(*ROOT_STAT) 
     compute_distance = ROOT_DISTANCES.get(DISTANCE_TYPE)  
-
-    # Create a mapping from 'depth_bin' to integer indices
-    depth_bin_mapping = {depth_bin: idx for idx, depth_bin in enumerate(obs_statistics['depth_bin'].unique())}
-
-    # Replace 'depth_bin' with its corresponding index
-    obs_statistics['depth_bin'] = obs_statistics['depth_bin'].map(depth_bin_mapping)
-
+   
+    # Check if 'depth_bin' column exists in obs_statistics
+    if 'depth_bin' in obs_statistics.columns:
+        # Create a mapping from 'depth_bin' to integer indices
+        depth_bin_mapping = {depth_bin: idx for idx, depth_bin in enumerate(obs_statistics['depth_bin'].unique())}
+        # Add a new column for depth bin indices to the DataFrame
+        obs_statistics['depth_bin_idx'] = obs_statistics['depth_bin'].map(depth_bin_mapping)
+        # Filter the DataFrame for rows where depth bin index is between 1 and 10
+        filtered_statistics = obs_statistics[(obs_statistics['depth_bin_idx'] >= 0) & (obs_statistics['depth_bin_idx'] <= 9)]
+    else:
+        print("'depth_bin' column not found in obs_statistics")
+        # Handle the case where 'depth_bin' column is not present
+        # For example, you might choose to use the entire DataFrame or take other actions
+        filtered_statistics = obs_statistics
+        
     # Convert the DataFrame to a NumPy array
-    observed_values = obs_statistics.to_numpy()
+    observed_values = filtered_statistics['rld'].to_numpy()
 
     # Print the resulting NumPy array
     print(observed_values)
