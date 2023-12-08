@@ -654,61 +654,6 @@ def read_stats_data(calc_statistics: bool, obs_file: str, stats_file: str,
     return obs_statistics, root_stats_map
 
 
-# Define your distance computation function (e.g., RMSE, MAE, etc.)
-def distance_fun(observed_values, simulated_values):
-    # Example with Mean Absolute Error (MAE)
-    return np.mean(np.abs(observed_values - simulated_values))
-
-def calculate_objectives(obs_statistics_df, sim_statistics_df, root_stats, compute_distance_func):
-    objectives = []
-
-    # Check if the specific statistic 'rld_for_locations' is the one we're interested in
-    if 'rld_for_locations' in root_stats:
-        # If yes, ensure that 'depth_bin' is a column in both observed and simulated DataFrames
-        if 'depth_bin' in obs_statistics_df.columns and 'depth_bin' in sim_statistics_df.columns:
-            # Calculate the objective for this statistic
-            objective = calculate_objective(obs_statistics_df, sim_statistics_df, compute_distance_func)
-            objectives.append(objective)
-    else:
-        # If not, calculate objectives for all other statistics
-        for k in root_stats:
-            # Make sure the statistic exists as a column in both observed and simulated data
-            if k in obs_statistics_df.columns and k in sim_statistics_df.columns:
-                obs_statistic = obs_statistics_df[k]
-                sim_statistic = sim_statistics_df[k]
-                # Compute the distance for each statistic
-                root_distance = compute_distance_func(obs_statistic, sim_statistic)
-                objectives.append(root_distance)
-
-    return objectives
-def calculate_objective(obs_statistics_df, sim_statistics_df, compute_distance_func, include_root_type=True):
-    # Assuming 'depth_bin' is in the DataFrame, cast it to string type
-    obs_statistics_df['depth_bin'] = obs_statistics_df['depth_bin'].astype(str)
-    sim_statistics_df['depth_bin'] = sim_statistics_df['depth_bin'].astype(str)
-
-    # Group by 'depth_bin' and optionally by 'root_type'
-    if include_root_type and 'root_type' in obs_statistics_df.columns:
-        grouped_obs = obs_statistics_df.groupby(['depth_bin', 'root_type'])
-        grouped_sim = sim_statistics_df.groupby(['depth_bin', 'root_type'])
-    else:
-        grouped_obs = obs_statistics_df.groupby(['depth_bin'])
-        grouped_sim = sim_statistics_df.groupby(['depth_bin'])
-    
-    # Initialize an empty list to hold the objective scores
-    objective_scores = []
-
-    # Iterate over unique combinations of 'depth_bin' and optionally 'root_type'
-    for group_keys, obs_group in grouped_obs:
-        if group_keys in grouped_sim.groups:
-            sim_group = grouped_sim.get_group(group_keys)
-            # Calculate the objective score using a custom distance function
-            distance = compute_distance_func(obs_group['rld'], sim_group['rld'])
-            objective_scores.append(distance)
-
-    # Sum or average the objective scores as needed
-    total_objective = sum(objective_scores)
-    return total_objective
-
 
 def read_simulated_stats_file(stats_file: str) -> pd.DataFrame:
     """

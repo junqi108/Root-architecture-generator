@@ -18,11 +18,11 @@ from typing import Any, Callable, Tuple
 # Internal
 from root_system_lib.config import add_argument, Config, construct_interval
 from root_system_lib.constants import APEX_DIAM, ORGAN_ORIGIN, SCALE_FACTOR, ROOT_TYPES
-from root_system_lib.distances import ROOT_DISTANCES
+from root_system_lib.distances import ROOT_DISTANCES,calculate_objectives, distance_fun,read_simulated_stats_file
 from root_system_lib.parameters import DeVriesParameters
 from root_system_lib.random_generation import get_rng
 from root_system_lib.root import RootNodeMap
-from root_system_lib.stats import exec_root_stats_map, read_stats_data, get_root_stats_map,calculate_objectives, distance_fun,read_simulated_stats_file
+from root_system_lib.stats import exec_root_stats_map, read_stats_data, get_root_stats_map
 
 
 ##########################################################################################################

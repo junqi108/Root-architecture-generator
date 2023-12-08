@@ -21,20 +21,39 @@ from typing import Tuple
 class DeVriesParameters:
     """Root system parameters from de Vries et al. (2021)."""
     def __init__(self, species, rng) -> None:
-        # Constants
-        self.ibd: Tuple[float] = (0.0078, 0.0078) # Inter Branch Distance
-        self.dinit: Tuple[float] = (0.11, 0.11) # Initial root Diameter in cm
-        self.groot: float = 0.0075 # Base rate of Gravitropism 
-        self.rzone: float = -1e-4 #-0.001 # No lateral zone in cm
-        self.angle_avg: float = 60 # average insertion angle of lateral roots
-        self.angle_var: float = 20 # variation in the insertion angle of lateral roots
-        self.rsp: Tuple[float] = (0.7, 0.5) # Ratio between secondary and primary roots
-        self.rts: Tuple[float] = (0.375, 0.375) # Ratio between tertiary and secondary roots
-        self.avg_root_r: float = 0.00105 # average root radius
-        self.mcp: Tuple[float] = (50, 50) # random root movement based on mechanical staticraints; radial degrees/m
-        self.sdd: Tuple[float] = (0, 0) # Standard deviation diameter for RDM
-        self.rtd: float = 0.05 # Root tissue density (g/cm3)
+        if species == 0:
+            # Constants
+            self.ibd: Tuple[float] = (0.0078, 0.0078) # Inter Branch Distance
+            self.dinit: Tuple[float] = (0.11, 0.11) # Initial root Diameter in cm
+            self.groot: float = 0.0075 # Base rate of Gravitropism 
+            self.rzone: float = -1e-4 #-0.001 # No lateral zone in cm
+            self.angle_avg: float = 60 # average insertion angle of lateral roots
+            self.angle_var: float = 20 # variation in the insertion angle of lateral roots
+            self.rsp: Tuple[float] = (0.7, 0.5) # Ratio between secondary and primary roots
+            self.rts: Tuple[float] = (0.375, 0.375) # Ratio between tertiary and secondary roots
+            self.avg_root_r: float = 0.00105 # average root radius
+            self.mcp: Tuple[float] = (50, 50) # random root movement based on mechanical staticraints; radial degrees/m
+            self.sdd: Tuple[float] = (0, 0) # Standard deviation diameter for RDM
+            self.rtd: float = 0.05 # Root tissue density (g/cm3)
 
+        elif species == 1:
+            # Constants
+            self.ibd: Tuple[float] = (0.0078, 0.0078) # Inter Branch Distance
+            self.dinit: Tuple[float] = (0.11, 0.11) # Initial root Diameter in cm
+            self.groot: float = 0.0075 # Base rate of Gravitropism 
+            self.rzone: float = -1e-4 #-0.001 # No lateral zone in cm
+            self.angle_avg: float = 60 # average insertion angle of lateral roots
+            self.angle_var: float = 20 # variation in the insertion angle of lateral roots
+            self.rsp: Tuple[float] = (0.7, 0.5) # Ratio between secondary and primary roots
+            self.rts: Tuple[float] = (0.375, 0.375) # Ratio between tertiary and secondary roots
+            self.avg_root_r: float = 0.00105 # average root radius
+            self.mcp: Tuple[float] = (50, 50) # random root movement based on mechanical staticraints; radial degrees/m
+            self.sdd: Tuple[float] = (0, 0) # Standard deviation diameter for RDM
+            self.rtd: float = 0.05 # Root tissue density (g/cm3)
+        else:
+            # Handle unexpected species value
+            raise ValueError(f"Unknown species: {species}")
+        
         self.species: int = species
         self.rng: np.random.Generator = rng
 

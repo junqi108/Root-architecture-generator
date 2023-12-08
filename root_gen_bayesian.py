@@ -20,7 +20,7 @@ from root_system_lib.distances import ROOT_DISTANCES
 from root_system_lib.parameters import DeVriesParameters
 from root_system_lib.random_generation import get_rng
 from root_system_lib.root import RootNodeMap
-from root_system_lib.stats import exec_root_stats_map, get_root_stats_map, read_stats_data
+from root_system_lib.stats import exec_root_stats_map, get_root_stats_map, read_stats_data,read_simulated_stats_file
 
 ##########################################################################################################
 ### Parameters
@@ -42,19 +42,20 @@ def get_parser():
     add_argument(parser, "--visualise", 0, "Visualise the trial results", choices = [0, 1])
 
     # ABC-SMC
-    add_argument(parser,"--draws", 5, "The number of samples to draw from the posterior. And also the number of independent chains")
-    add_argument(parser, "--steps", 5, "The number of steps for each Markov Chain")
+    add_argument(parser,"--draws", 1, "The number of samples to draw from the posterior. And also the number of independent chains")
+    add_argument(parser, "--steps", 2, "The number of steps for each Markov Chain")
     add_argument(parser, "--chains", 1, "The number of chains to sample. Running independent chains is important for some convergence statistics")
     add_argument(parser, "--parallel", 0, "Distribute computations across cores if the number of cores is larger than 1", choices = [0, 1])
-    add_argument(parser, "--distance", "euclidean", "The data dissimilarity metric", str, choices = ["euclidean"])
+    add_argument(parser, "--distance", "customized", "The data dissimilarity metric", str, choices = ["euclidean"])
 
     # de Vries et al. (2021) Mycorrhizal associations change root functionality...
     add_argument(parser, "--species", 0, "The species associated with the root system", choices = [0, 1])
 
     # Input 
     add_argument(parser, "--obs_file", "data/root_obs.csv", "The observed root data file name", str)
-    add_argument(parser, "--stats_file", "data/root_stats.csv", "The observed root statistics file name", str)
-    add_argument(parser, "--calc_statistics", 1, "Calculate summary statistics from the observed root data", choices = [0, 1])
+    add_argument(parser, "--stats_file", "data/summary_stats/root_stats_1.csv", "The observed root statistics file name", str)
+    # add_argument(parser, "--stats_file", "data/root_stats.csv", "The observed root statistics file name", str)
+    add_argument(parser, "--calc_statistics", 0, "Calculate summary statistics from the observed root data", choices = [0, 1])
 
     # Ouput
     add_argument(parser, "--dir", "data/bayesian", "Output directory", str)
@@ -63,7 +64,7 @@ def get_parser():
     add_argument(parser, "--bins", 10, "Number of bins when binning root data")
 
     # Roots
-    add_argument(parser, "--root_stat", "depth_cum", "A root statistic to compare simulated and real data", str, choices = available_stats)
+    add_argument(parser, "--root_stat", "rld_for_locations", "A root statistic to compare simulated and real data", str, choices = available_stats)
     add_argument(parser, "--col_stats_map", None, "A comma-delimited list of mapped columns and statistics", str)
     add_argument(parser, "--min_order", 3, "The minimum root organ order")
     add_argument(parser, "--max_order", 4, "The maximum root organ order")
@@ -193,7 +194,7 @@ if __name__ == "__main__":
     # Soil
     SOIL_BLOCK_SIZE = CONFIG.get("sblock_size")
 
-    # Args
+  # Args
     KWARGS_MAP = {
         "bins": BINS,
         "depth_cum_col": "z",
@@ -201,8 +202,14 @@ if __name__ == "__main__":
         "rtd": ROOT_PARAMS.rtd,
         "soil_block_size": SOIL_BLOCK_SIZE,
         "as_scalar": True,
-        "values_only": True
+        "values_only": False,
+        "x_locations": [0.1],  # Example x coordinates
+        "y_locations": [1.5],  # Example y coordinates
+        "x_tolerance": 0.2,  # Example tolerance for x
+        "depth_interval": 0.1,  # Example depth interval in meters
+        "ROOT_GROUP": ""
     }
+
 
 ##########################################################################################################
 ### Main
@@ -228,8 +235,17 @@ def root_sim(max_order: int, num_segs: int, length_reduction: float, snum_growth
     root_map.position_primary_roots(proot_num, ORIGIN_NOISE_RANGE)
     root_map.validate(NO_ROOT_ZONE, validation_pitch, max_attempts)
     sim_df = root_map.to_dataframe(ROUND)
-    sim_statistic = exec_root_stats_map(sim_df, ROOT_STATS_MAP, ROOT_STAT, KWARGS_MAP, ROOT_TYPE).get(*ROOT_STAT) 
-    return sim_statistic
+    sim_statistic = exec_root_stats_map(sim_df, ROOT_STATS_MAP, ROOT_STAT, KWARGS_MAP)
+     # Create a mapping from 'depth_bin' to integer indices
+    depth_bin_mapping = {depth_bin: idx for idx, depth_bin in enumerate(sim_statistic['depth_bin'].unique())}
+
+    # Replace 'depth_bin' with its corresponding index
+    sim_statistic['depth_bin'] = sim_statistic['depth_bin'].map(depth_bin_mapping)
+
+    # Convert the DataFrame to a NumPy array
+    sim_statistic_values = sim_statistic.to_numpy()
+    print(sim_statistic_values)
+    return sim_statistic_values
 
 def fit_model(compute_distance: Callable, obs_statistic: pd.DataFrame, e: float):
     # Specification for ABC-SMC model.
@@ -254,7 +270,8 @@ def fit_model(compute_distance: Callable, obs_statistic: pd.DataFrame, e: float)
         min_prlength, max_prlength = __add_interval(PRLENGTH_INTERVAL, "min_prlength", "max_prlength", pm.Uniform, PRLENGTH_VARIANCE)
         min_srlength, max_srlength = __add_interval(SRLENGTH_INTERVAL, "min_srlength", "max_srlength", pm.Uniform, SRLENGTH_VARIANCE)
         srnum_min, srnum_max = __add_interval(SRNUM_INTERVAL, "srnum_min", "srnum_max", pm.DiscreteUniform, SRNUM_VARIANCE)
-
+        observed_values = obs_statistic.to_numpy()
+        
         # Create simulator
         S = pm.Simulator(
             "S", function = root_sim, 
@@ -262,7 +279,7 @@ def fit_model(compute_distance: Callable, obs_statistic: pd.DataFrame, e: float)
                 inner_rnum_int, min_prlength, max_prlength, min_srlength, max_srlength, srnum_min, srnum_max),
                 sum_stat = "identity",
                 epsilon = e,
-                observed = obs_statistic,
+                observed = observed_values,
                 distance = compute_distance
             )
     
@@ -293,12 +310,33 @@ def fit_model(compute_distance: Callable, obs_statistic: pd.DataFrame, e: float)
             fig.savefig(f"{DIR}/posterior_plot.png")
 
 def main() -> None:
-    obs_statistics, _ = read_stats_data(CONFIG.get_as("calc_statistics", bool), OBS_FILE, STATS_FILE, ROOT_STAT, KWARGS_MAP, 
-        COL_STATS_MAP, ROOT_TYPE)  
-    obs_statistic = obs_statistics.get(*ROOT_STAT) 
-    compute_distance = ROOT_DISTANCES.get(DISTANCE_TYPE)
+
+    if "rld_for_locations" in ROOT_STAT:
+        print("Reading simulated stats from:", STATS_FILE, ROOT_STAT)
+        obs_statistics = read_simulated_stats_file(STATS_FILE)
+    else:
+        # Otherwise, use the read_stats_data function to process other types of statistics
+        obs_statistics, _ = read_stats_data(CONFIG.get_as("calc_statistics", bool), 
+                                            OBS_FILE, STATS_FILE, ROOT_STAT, KWARGS_MAP, 
+                                            COL_STATS_MAP, ROOT_TYPE)
+        
+    # obs_statistic = obs_statistics.get(*ROOT_STAT) 
+    compute_distance = ROOT_DISTANCES.get(DISTANCE_TYPE)  
+
+    # Create a mapping from 'depth_bin' to integer indices
+    depth_bin_mapping = {depth_bin: idx for idx, depth_bin in enumerate(obs_statistics['depth_bin'].unique())}
+
+    # Replace 'depth_bin' with its corresponding index
+    obs_statistics['depth_bin'] = obs_statistics['depth_bin'].map(depth_bin_mapping)
+
+    # Convert the DataFrame to a NumPy array
+    observed_values = obs_statistics.to_numpy()
+
+    # Print the resulting NumPy array
+    print(observed_values)
+
     e = 1
-    fit_model(compute_distance, obs_statistic, e)
+    fit_model(compute_distance, obs_statistics, e)
     config_yaml: str = f"{DIR}/root_config.yaml"
     CONFIG.to_yaml(config_yaml)
     print(f"Configuration written to {config_yaml}")
