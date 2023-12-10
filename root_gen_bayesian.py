@@ -20,7 +20,7 @@ from root_system_lib.distances import ROOT_DISTANCES
 from root_system_lib.parameters import DeVriesParameters
 from root_system_lib.random_generation import get_rng
 from root_system_lib.root import RootNodeMap
-from root_system_lib.stats import exec_root_stats_map, get_root_stats_map, read_stats_data,read_simulated_stats_file
+from root_system_lib.stats import exec_root_stats_map, get_root_stats_map, read_stats_data,read_simulated_stats_file,filter_and_convert_to_numpy
 
 ##########################################################################################################
 ### Parameters
@@ -237,29 +237,16 @@ def root_sim(max_order: int, num_segs: int, length_reduction: float, snum_growth
     sim_df = root_map.to_dataframe(ROUND)
     
     sim_statistic = exec_root_stats_map(sim_df, ROOT_STATS_MAP, ROOT_STAT, KWARGS_MAP)
-    print("sim_statistic", sim_statistic)
-   # Ensure 'depth_bin' is mapped to integer indices correctly
-    if 'depth_bin' in sim_statistic.columns:
-        depth_bin_mapping = {depth_bin: idx for idx, depth_bin in enumerate(sim_statistic['depth_bin'].cat.categories)}
-        sim_statistic['depth_bin_idx'] = sim_statistic['depth_bin'].map(depth_bin_mapping).astype(int)
+   
+    grouping_var = 'depth_bin' # This can be any type now
+    range_start = 0 # Or any other appropriate starting value
+    range_end = 9
+    select_vars = ['rld']
+    sim_values = filter_and_convert_to_numpy(sim_statistic, grouping_var, range_start, range_end, select_vars)
 
-        # Filter and clean the DataFrame
-        filtered_statistics = sim_statistic[(sim_statistic['depth_bin_idx'] >= 0) & (sim_statistic['depth_bin_idx'] <= 9)]
-        filtered_statistics = filtered_statistics.dropna(subset=['rld'])
-        filtered_statistics = filtered_statistics[np.isfinite(filtered_statistics['rld'])]
-
-        if not filtered_statistics.empty:
-            sim_values = np.array(filtered_statistics['rld'], dtype=np.float64)
-            print("sim values", sim_values)
-            return sim_values
-        else:
-            print("Filtered statistics DataFrame is empty.")
-            # Handle the empty DataFrame scenario
-    else:
-        print("'depth_bin' column not found in sim_statistic")
 
     # try just to use the rld column
-    print("sim values", sim_values)
+    # print("sim values", sim_values)
     return sim_values
 
 def fit_model(compute_distance: Callable, obs_statistic: pd.DataFrame, e: float):
@@ -344,24 +331,30 @@ def main() -> None:
         
     # obs_statistic = obs_statistics.get(*ROOT_STAT) 
     compute_distance = ROOT_DISTANCES.get(DISTANCE_TYPE)  
-   
-    # Check if 'depth_bin' column exists in obs_statistics
-    if 'depth_bin' in obs_statistics.columns:
-        # Create a mapping from 'depth_bin' to integer indices
-        depth_bin_mapping = {depth_bin: idx for idx, depth_bin in enumerate(obs_statistics['depth_bin'].unique())}
-        # Add a new column for depth bin indices to the DataFrame
-        obs_statistics['depth_bin_idx'] = obs_statistics['depth_bin'].map(depth_bin_mapping)
-        # Filter the DataFrame for rows where depth bin index is between 1 and 10
-        obs_statistics = obs_statistics[(obs_statistics['depth_bin_idx'] >= 0) & (obs_statistics['depth_bin_idx'] <= 9)]
-    else:
-        print("'depth_bin' column not found in obs_statistics")
+    
+    grouping_var = 'depth_bin' # This can be any type now
+    range_start = 0 # Or any other appropriate starting value
+    range_end = 9
+    select_vars = ['rld']
+    observed_values = filter_and_convert_to_numpy(obs_statistics, grouping_var, range_start, range_end, select_vars)
+
+    # # Check if 'depth_bin' column exists in obs_statistics
+    # if 'depth_bin' in obs_statistics.columns:
+    #     # Create a mapping from 'depth_bin' to integer indices
+    #     depth_bin_mapping = {depth_bin: idx for idx, depth_bin in enumerate(obs_statistics['depth_bin'].unique())}
+    #     # Add a new column for depth bin indices to the DataFrame
+    #     obs_statistics['depth_bin_idx'] = obs_statistics['depth_bin'].map(depth_bin_mapping)
+    #     # Filter the DataFrame for rows where depth bin index is between 1 and 10
+    #     obs_statistics = obs_statistics[(obs_statistics['depth_bin_idx'] >= 0) & (obs_statistics['depth_bin_idx'] <= 9)]
+    # else:
+    #     print("'depth_bin' column not found in obs_statistics")
         
-    # Convert the DataFrame to a NumPy array
-    # observed_values = filtered_statistics['rld'].to_numpy()
+    # # Convert the DataFrame to a NumPy array
+    # # observed_values = filtered_statistics['rld'].to_numpy()
+    # # observed_values = np.array(obs_statistics['rld'], dtype=np.float64)
+    # obs_statistics = obs_statistics.dropna()  # Removes rows with NaN
+    # obs_statistics = obs_statistics[np.isfinite(obs_statistics['rld'])]  # Keeps only finite values
     # observed_values = np.array(obs_statistics['rld'], dtype=np.float64)
-    obs_statistics = obs_statistics.dropna()  # Removes rows with NaN
-    obs_statistics = obs_statistics[np.isfinite(obs_statistics['rld'])]  # Keeps only finite values
-    observed_values = np.array(obs_statistics['rld'], dtype=np.float64)
 
     # Print the resulting NumPy array
     print(observed_values)

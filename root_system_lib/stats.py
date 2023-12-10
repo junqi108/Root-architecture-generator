@@ -673,3 +673,44 @@ def read_simulated_stats_file(stats_file: str) -> pd.DataFrame:
 
 # Example usage:
 # sim_stats_df = read_simulated_stats_file(stats_file="path/to/simulated_stats.csv")
+
+def filter_and_convert_to_numpy(df: pd.DataFrame, grouping_var: str, range_start: int, range_end: int, select_vars: list) -> list:
+    """
+    Filters a DataFrame based on a grouping variable and a specified range, 
+    then converts each selected variable into separate NumPy arrays.
+
+    :param df: The DataFrame to process.
+    :param grouping_var: The name of the grouping variable in the DataFrame.
+    :param range_start: The lower limit for the range of the grouping variable.
+    :param range_end: The upper limit for the grouping variable.
+    :param select_vars: List of variables to select for the NumPy arrays.
+    :return: List of NumPy arrays, each corresponding to a selected variable.
+    """
+    if grouping_var in df.columns:
+        # Convert grouping variable to integer index if it's not numeric
+        if not pd.api.types.is_numeric_dtype(df[grouping_var]):
+            mapping = {value: idx for idx, value in enumerate(df[grouping_var].unique())}
+            df[grouping_var] = df[grouping_var].map(mapping).astype(int)
+
+        # Filter and clean the DataFrame
+        filtered_df = df[(df[grouping_var] >= range_start) & (df[grouping_var] <= range_end)]
+        filtered_df = filtered_df.dropna(subset=select_vars)
+        filtered_df = filtered_df[np.isfinite(filtered_df[select_vars]).all(axis=1)]
+
+        if not filtered_df.empty:
+            # Concatenate selected variables into one NumPy array
+            return np.concatenate([filtered_df[var].values[:, None] for var in select_vars], axis=1)
+        else:
+            print("Filtered DataFrame is empty.")
+            return np.array([])
+    else:
+        print(f"'{grouping_var}' column not found in the DataFrame.")
+        return np.array([])
+
+# Example usage
+# df is your DataFrame
+# grouping_var = 'depth_bin'
+# range_start = 0
+# range_end = 9
+# select_vars = ['rld', 'another_column']
+# result_arrays = filter_and_convert_to_numpy(df, grouping_var, range_start, range_end, select_vars)
