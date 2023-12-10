@@ -37,9 +37,9 @@ class DeVriesParameters:
             self.rtd: float = 0.05 # Root tissue density (g/cm3)
 
         elif species == 1:
-            # Constants
+            # Constants grapvine
             self.ibd: Tuple[float] = (0.0078, 0.0078) # Inter Branch Distance
-            self.dinit: Tuple[float] = (0.11, 0.11) # Initial root Diameter in cm
+            self.dinit: Tuple[float] = (3.1, 3.1) # Initial root Diameter in cm
             self.groot: float = 0.0075 # Base rate of Gravitropism 
             self.rzone: float = -1e-4 #-0.001 # No lateral zone in cm
             self.angle_avg: float = 60 # average insertion angle of lateral roots

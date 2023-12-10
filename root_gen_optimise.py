@@ -80,7 +80,7 @@ def get_parser():
     add_argument(parser, "--origin_min", 1e-2, "The minimum distance of the initial primary root from the origin (cm)", float)
     add_argument(parser, "--origin_max", 1e-1, "The maximum distance of the initial primary root from the origin (cm)", float)
     add_argument(parser, "--r_ratio", 0.5, "Ratio of fine roots to structural roots based upon overall root diameter", float)
-    add_argument(parser, "--froot_threshold", 2, "Threshold for classifying a root as a fine root, rather than a structural root (mm)", float)
+    add_argument(parser, "--froot_threshold", 0.2, "Threshold for classifying a root as a fine root, rather than a structural root (mm)", float)
     add_argument(parser, "--root_type", 1, "The root type to calculate summary statistics for", type=str, choices=ROOT_TYPES)
 
     ## Primary
