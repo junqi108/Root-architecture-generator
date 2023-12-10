@@ -229,6 +229,7 @@ def root_sim(max_order: int, num_segs: int, length_reduction: float, snum_growth
     root_map.validate(NO_ROOT_ZONE, validation_pitch, max_attempts)
     sim_df = root_map.to_dataframe(ROUND)
     sim_statistic = exec_root_stats_map(sim_df, ROOT_STATS_MAP, ROOT_STAT, KWARGS_MAP, ROOT_TYPE).get(*ROOT_STAT) 
+    print("sim_statistic", sim_statistic)
     return sim_statistic
 
 def fit_model(compute_distance: Callable, obs_statistic: pd.DataFrame, e: float):
@@ -296,6 +297,7 @@ def main() -> None:
     obs_statistics, _ = read_stats_data(CONFIG.get_as("calc_statistics", bool), OBS_FILE, STATS_FILE, ROOT_STAT, KWARGS_MAP, 
         COL_STATS_MAP, ROOT_TYPE)  
     obs_statistic = obs_statistics.get(*ROOT_STAT) 
+    print("obs_statistic", obs_statistic)
     compute_distance = ROOT_DISTANCES.get(DISTANCE_TYPE)
     e = 1
     fit_model(compute_distance, obs_statistic, e)
