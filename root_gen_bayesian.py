@@ -237,6 +237,7 @@ def root_sim(max_order: int, num_segs: int, length_reduction: float, snum_growth
     sim_df = root_map.to_dataframe(ROUND)
     
     sim_statistic = exec_root_stats_map(sim_df, ROOT_STATS_MAP, ROOT_STAT, KWARGS_MAP)
+    print("sim_statistic", sim_statistic)
     # Check if 'depth_bin' column exists in obs_statistics
     if 'depth_bin' in sim_statistic.columns:
         # Create a mapping from 'depth_bin' to integer indices
@@ -247,17 +248,14 @@ def root_sim(max_order: int, num_segs: int, length_reduction: float, snum_growth
         filtered_statistics = sim_statistic[(sim_statistic['depth_bin_idx'] >= 0) & (sim_statistic['depth_bin_idx'] <= 9)]
     else:
         print("'depth_bin' column not found in obs_statistics")
-        # Handle the case where 'depth_bin' column is not present
-        # For example, you might choose to use the entire DataFrame or take other actions
-        filtered_statistics = sim_statistic
         
     # Convert the DataFrame to a NumPy array
-    sim_values = filtered_statistics['rld'].to_numpy()
-    
+    # sim_values = filtered_statistics['rld'].to_numpy()
+    filtered_statistics = filtered_statistics.dropna()  # Removes rows with NaN
+    filtered_statistics = filtered_statistics[np.isfinite(filtered_statistics['rld'])]  # Keeps only finite values
+    sim_values = np.array(filtered_statistics['rld'], dtype=np.float64)
     # try just to use the rld column
-
-    print(sim_values)
-    
+    print("sim values", sim_values)
     return sim_values
 
 def fit_model(compute_distance: Callable, obs_statistic: pd.DataFrame, e: float):
@@ -283,7 +281,7 @@ def fit_model(compute_distance: Callable, obs_statistic: pd.DataFrame, e: float)
         min_prlength, max_prlength = __add_interval(PRLENGTH_INTERVAL, "min_prlength", "max_prlength", pm.Uniform, PRLENGTH_VARIANCE)
         min_srlength, max_srlength = __add_interval(SRLENGTH_INTERVAL, "min_srlength", "max_srlength", pm.Uniform, SRLENGTH_VARIANCE)
         srnum_min, srnum_max = __add_interval(SRNUM_INTERVAL, "srnum_min", "srnum_max", pm.DiscreteUniform, SRNUM_VARIANCE)
-        observed_values = obs_statistic.to_numpy()
+        
         
         # Create simulator
         S = pm.Simulator(
@@ -292,7 +290,7 @@ def fit_model(compute_distance: Callable, obs_statistic: pd.DataFrame, e: float)
                 inner_rnum_int, min_prlength, max_prlength, min_srlength, max_srlength, srnum_min, srnum_max),
                 sum_stat = "identity",
                 epsilon = e,
-                observed = observed_values,
+                observed = obs_statistic,
                 distance = compute_distance
             )
     
@@ -322,10 +320,12 @@ def fit_model(compute_distance: Callable, obs_statistic: pd.DataFrame, e: float)
             fig = root_posterior.ravel()[0].figure
             fig.savefig(f"{DIR}/posterior_plot.png")
 
+
+
 def main() -> None:
 
     if "rld_for_locations" in ROOT_STAT:
-        print("Reading simulated stats from:", STATS_FILE, ROOT_STAT)
+        print("Reading simulated stats from:", STATS_FILE, "stats is:", ROOT_STAT)
         obs_statistics = read_simulated_stats_file(STATS_FILE)
     else:
         # Otherwise, use the read_stats_data function to process other types of statistics
@@ -343,21 +343,22 @@ def main() -> None:
         # Add a new column for depth bin indices to the DataFrame
         obs_statistics['depth_bin_idx'] = obs_statistics['depth_bin'].map(depth_bin_mapping)
         # Filter the DataFrame for rows where depth bin index is between 1 and 10
-        filtered_statistics = obs_statistics[(obs_statistics['depth_bin_idx'] >= 0) & (obs_statistics['depth_bin_idx'] <= 9)]
+        obs_statistics = obs_statistics[(obs_statistics['depth_bin_idx'] >= 0) & (obs_statistics['depth_bin_idx'] <= 9)]
     else:
         print("'depth_bin' column not found in obs_statistics")
-        # Handle the case where 'depth_bin' column is not present
-        # For example, you might choose to use the entire DataFrame or take other actions
-        filtered_statistics = obs_statistics
         
     # Convert the DataFrame to a NumPy array
-    observed_values = filtered_statistics['rld'].to_numpy()
+    # observed_values = filtered_statistics['rld'].to_numpy()
+    # observed_values = np.array(obs_statistics['rld'], dtype=np.float64)
+    obs_statistics = obs_statistics.dropna()  # Removes rows with NaN
+    obs_statistics = obs_statistics[np.isfinite(obs_statistics['rld'])]  # Keeps only finite values
+    observed_values = np.array(obs_statistics['rld'], dtype=np.float64)
 
     # Print the resulting NumPy array
     print(observed_values)
 
     e = 1
-    fit_model(compute_distance, obs_statistics, e)
+    fit_model(compute_distance, observed_values, e)
     config_yaml: str = f"{DIR}/root_config.yaml"
     CONFIG.to_yaml(config_yaml)
     print(f"Configuration written to {config_yaml}")

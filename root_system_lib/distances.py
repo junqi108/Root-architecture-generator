@@ -36,6 +36,7 @@ def distance_euclidean(e: float, obs: np.ndarray, sim: np.ndarray) -> Tuple[np.n
         The computed euclidean distances.
     """
     dist = np.linalg.norm(obs - sim)
+    print("distance", dist)
     return dist * e
 
 
