@@ -42,8 +42,8 @@ def get_parser():
     add_argument(parser, "--visualise", 0, "Visualise the trial results", choices = [0, 1])
 
     # ABC-SMC
-    add_argument(parser,"--draws", 1, "The number of samples to draw from the posterior. And also the number of independent chains")
-    add_argument(parser, "--steps", 2, "The number of steps for each Markov Chain")
+    add_argument(parser,"--draws", 5, "The number of samples to draw from the posterior. And also the number of independent chains")
+    add_argument(parser, "--steps", 5, "The number of steps for each Markov Chain")
     add_argument(parser, "--chains", 1, "The number of chains to sample. Running independent chains is important for some convergence statistics")
     add_argument(parser, "--parallel", 0, "Distribute computations across cores if the number of cores is larger than 1", choices = [0, 1])
     add_argument(parser, "--distance", "euclidean", "The data dissimilarity metric", str, choices = ["euclidean"])
@@ -238,22 +238,26 @@ def root_sim(max_order: int, num_segs: int, length_reduction: float, snum_growth
     
     sim_statistic = exec_root_stats_map(sim_df, ROOT_STATS_MAP, ROOT_STAT, KWARGS_MAP)
     print("sim_statistic", sim_statistic)
-    # Check if 'depth_bin' column exists in obs_statistics
+   # Ensure 'depth_bin' is mapped to integer indices correctly
     if 'depth_bin' in sim_statistic.columns:
-        # Create a mapping from 'depth_bin' to integer indices
-        depth_bin_mapping = {depth_bin: idx for idx, depth_bin in enumerate(sim_statistic['depth_bin'].unique())}
-        # Add a new column for depth bin indices to the DataFrame
-        sim_statistic['depth_bin_idx'] = sim_statistic['depth_bin'].map(depth_bin_mapping)
-        # Filter the DataFrame for rows where depth bin index is between 1 and 10
+        depth_bin_mapping = {depth_bin: idx for idx, depth_bin in enumerate(sim_statistic['depth_bin'].cat.categories)}
+        sim_statistic['depth_bin_idx'] = sim_statistic['depth_bin'].map(depth_bin_mapping).astype(int)
+
+        # Filter and clean the DataFrame
         filtered_statistics = sim_statistic[(sim_statistic['depth_bin_idx'] >= 0) & (sim_statistic['depth_bin_idx'] <= 9)]
+        filtered_statistics = filtered_statistics.dropna(subset=['rld'])
+        filtered_statistics = filtered_statistics[np.isfinite(filtered_statistics['rld'])]
+
+        if not filtered_statistics.empty:
+            sim_values = np.array(filtered_statistics['rld'], dtype=np.float64)
+            print("sim values", sim_values)
+            return sim_values
+        else:
+            print("Filtered statistics DataFrame is empty.")
+            # Handle the empty DataFrame scenario
     else:
-        print("'depth_bin' column not found in obs_statistics")
-        
-    # Convert the DataFrame to a NumPy array
-    # sim_values = filtered_statistics['rld'].to_numpy()
-    filtered_statistics = filtered_statistics.dropna()  # Removes rows with NaN
-    filtered_statistics = filtered_statistics[np.isfinite(filtered_statistics['rld'])]  # Keeps only finite values
-    sim_values = np.array(filtered_statistics['rld'], dtype=np.float64)
+        print("'depth_bin' column not found in sim_statistic")
+
     # try just to use the rld column
     print("sim values", sim_values)
     return sim_values
@@ -298,7 +302,12 @@ def fit_model(compute_distance: Callable, obs_statistic: pd.DataFrame, e: float)
     trace, sim_data = pm.sample_smc(model = root_model, draws = NDRAWS, n_steps = NSTEPS, tune_steps = True, 
         kernel='ABC', save_sim_data = True, chains = NCHAINS, parallel = PARALLEL)
 
-    parameter_summary = pm.stats.summary(trace)
+     # Convert to ArviZ's InferenceData
+    inference_data = az.from_pymc3(trace=trace, model=root_model)
+
+    # Post-model analysis
+    # (Outside the model context)
+    parameter_summary = az.summary(inference_data)
     parameter_summary.to_csv(OUT)
     print(f"Parameter summary results written to {OUT}")
 
