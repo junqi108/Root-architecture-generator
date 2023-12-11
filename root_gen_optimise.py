@@ -18,11 +18,11 @@ from typing import Any, Callable, Tuple
 # Internal
 from root_system_lib.config import add_argument, Config, construct_interval
 from root_system_lib.constants import APEX_DIAM, ORGAN_ORIGIN, SCALE_FACTOR, ROOT_TYPES
-from root_system_lib.distances import ROOT_DISTANCES,calculate_objectives, distance_fun,read_simulated_stats_file
+from root_system_lib.distances import ROOT_DISTANCES,calculate_objectives, distance_fun
 from root_system_lib.parameters import DeVriesParameters
 from root_system_lib.random_generation import get_rng
 from root_system_lib.root import RootNodeMap
-from root_system_lib.stats import exec_root_stats_map, read_stats_data, get_root_stats_map
+from root_system_lib.stats import exec_root_stats_map, read_stats_data, get_root_stats_map,read_simulated_stats_file
 
 
 ##########################################################################################################
@@ -39,7 +39,7 @@ def get_parser():
     # Optuna
     add_argument(parser, "--experiment_name", "root_gen_optimise", "The optimisation experiment name", str)
     add_argument(parser, "--sampler", "tpes", "The optimisation sampling algorithm", str, choices = ["tpes", "cmaes", "nsga", "motpes"])
-    add_argument(parser, "--n_trials", 1000, "The number of optimisation trials to perform")
+    add_argument(parser, "--n_trials", 2, "The number of optimisation trials to perform")
     add_argument(parser, "--n_jobs", -1, "The number of trials to run in parallel")
     add_argument(parser, "--gc_after_trial", 0, "Perform garbage collection after each trial", choices = [0, 1])
 
