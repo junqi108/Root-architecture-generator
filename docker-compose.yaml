@@ -1,0 +1,25 @@
+version: "3.7"
+
+services:
+  rootgen:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: "rootsim"
+    restart: unless-stopped
+    stop_grace_period: 10s
+    env_file: .env
+    mem_limit: 6g
+    mem_reservation: 2g
+    environment:
+      # Add any environment variables your application needs
+    command: /bin/bash -c "conda activate rootsim && python ./rootgen.py"
+    volumes:
+      - .:/app  # Mounts the current directory to /app in the container
+    stdin_open: true  # Keeps the stdin open
+    tty: true  # Allocates a pseudo-TTY, making it possible to interact with the container
+
+networks:
+  default:
+    name: $PROJECT_NAME
+
