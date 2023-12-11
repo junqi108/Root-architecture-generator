@@ -65,6 +65,8 @@ def root_cum_sum(coord: np.array, bins = 10) -> np.array:
     pdf = count / sum(count)
     cdf = np.cumsum(pdf)
     cdf = np.insert(cdf, 0, 0)
+    return cdf, bins_count[1:]
+
 
 def calc_rld_and_sum_for_multiple_locations(df: pd.DataFrame, x_locations: list, y_locations: list, 
                                             x_tolerance: float, depth_interval: float = 0.3, 
@@ -150,6 +152,7 @@ def calc_root_stats(df : pd.DataFrame, out : str, bins: int = 10) -> None:
     coords = get_df_coords(df, "coordinates")
     depth = abs(coords.z)
     horizontal = abs(coords.melt(value_vars=["x", "y"]).value)
+    
     depth_density, depth_bin = root_cum_sum(depth, bins)
     horizontal_density, horizontal_bin = root_cum_sum(horizontal, bins)
     stats_df = pd.DataFrame({

@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  rootgen:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: "rootsim"
+    restart: unless-stopped
+    stop_grace_period: 10s
+    env_file: .env
+    mem_limit: 6g
+    mem_reservation: 2g
+    volumes:
+      - .:/usr/src/app  # Mounts the current directory to /app in the container
+    command: python ./root_gen.py
