@@ -2,15 +2,15 @@ version: "3.7"
 
 services:
   rootgen:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+    image: "ghcr.io/${CONTAINER_REG_USER}/${CONTAINER_REG_NAME}:latest"
     container_name: "rootsim"
-    restart: unless-stopped
+    restart: "no"  # Changed from 'unless-stopped' to 'no'
     stop_grace_period: 10s
     env_file: .env
     mem_limit: 6g
     mem_reservation: 2g
     volumes:
-      - .:/usr/src/app  # Mounts the current directory to /app in the container
-    command: python ./root_gen.py
+      - .:/usr/src/app
+    command: conda run -n rootSim python ./root_gen_bayesian.py
+    # command: conda run -n rootSim python ./root_gen.py --from_config 1
+    # command: conda run -n rootSim python ./root_gen.py

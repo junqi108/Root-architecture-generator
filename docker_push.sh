@@ -12,7 +12,7 @@ echo $CR_PAT | sudo docker login ghcr.io -u USERNAME --password-stdin
 
 # Find DOCKER_IMAGE_HASH of the rootsim_container
 # This command filters the images to find the one named "rootsim" and retrieves its ID
-IFS='\n' read -r -a array <<< "$(sudo docker images --filter=reference='rootsim' --format '{{.ID}}')"
+IFS='\n' read -r -a array <<< "$(sudo docker images --filter=reference='rootsim:latest' --format '{{.ID}}')"
 echo "${array[0]}"
 
 # Tag the image for the GitHub Container Registry
