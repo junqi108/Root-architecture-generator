@@ -27,16 +27,16 @@ def get_parser():
     )
 
     # System
-    add_argument(parser, "--from_config", 0, "Override parameters using a root_config.yaml file", choices = [0, 1])
+    add_argument(parser, "--from_config", 1, "Override parameters using a root_config.yaml file", choices = [0, 1])
     add_argument(parser, "--max_vattempts", 15, "The maximum number of attempts to fix each validation error")
     add_argument(parser, "--correction_angle", 90, "The rotation angle about the y-axis for out-of-bounds roots")
     add_argument(parser, "--visualise", 0, "Visualise the root generation process at each transformation step", choices = [0, 1])
 
     # de Vries et al. (2021) Mycorrhizal associations change root functionality...
-    add_argument(parser, "--species", 0, "The species associated with the root system", choices = [0, 1])
+    add_argument(parser, "--species", 1, "The species associated with the root system", choices = [0, 1])
 
     # Ouput
-    add_argument(parser, "--dir", "data/root_sim", "Output directory", str)
+    add_argument(parser, "--dir", "data/optimise", "Output directory", str)
     add_argument(parser, "--out", "root_sim.csv", "Output CSV file name", str)
     add_argument(parser, "--round", 10, "Number of decimal places to round values when writing to file")
     add_argument(parser, "--stats", 1, "Calculate statistics for the root system", choices = [0, 1])

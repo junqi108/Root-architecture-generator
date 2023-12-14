@@ -39,8 +39,8 @@ def get_parser():
     # Optuna
     add_argument(parser, "--experiment_name", "root_gen_optimise", "The optimisation experiment name", str)
     add_argument(parser, "--sampler", "tpes", "The optimisation sampling algorithm", str, choices = ["tpes", "cmaes", "nsga", "motpes"])
-    add_argument(parser, "--n_trials", 2, "The number of optimisation trials to perform")
-    add_argument(parser, "--n_jobs", -1, "The number of trials to run in parallel")
+    add_argument(parser, "--n_trials", 10, "The number of optimisation trials to perform")
+    add_argument(parser, "--n_jobs", 1, "The number of trials to run in parallel")
     add_argument(parser, "--gc_after_trial", 0, "Perform garbage collection after each trial", choices = [0, 1])
 
     add_argument(parser, "--distance", "euclidean", "The data dissimilarity metric", str, choices = ["euclidean"])
@@ -58,11 +58,11 @@ def get_parser():
     add_argument(parser, "--visualise", 0, "Visualise the trial results", choices = [0, 1])
 
     # de Vries et al. (2021) Mycorrhizal associations change root functionality...
-    add_argument(parser, "--species", 0, "The species associated with the root system", choices = [0, 1])
+    add_argument(parser, "--species", 1, "The species associated with the root system", choices = [0, 1])
 
     # Input 
     add_argument(parser, "--obs_file", "data/root_obs.csv", "The observed root data file name", str)
-    add_argument(parser, "--stats_file", "data/summary_stats/root_stats.csv", "The observed root statistics file name", str)
+    add_argument(parser, "--stats_file", "data/summary_stats/root_stats_1.csv", "The observed root statistics file name", str)
     # add_argument(parser, "--stats_file", "data/root_stats.csv", "The observed root statistics file name", str)
     add_argument(parser, "--calc_statistics", 0, "Calculate summary statistics from the observed root data", choices = [0, 1])
 
@@ -77,15 +77,15 @@ def get_parser():
     add_argument(parser, "--col_stats_map", None, "A comma-delimited list of mapped columns and statistics", str)
     add_argument(parser, "--min_order", 3, "The minimum root organ order")
     add_argument(parser, "--max_order", 6, "The maximum root organ order")
-    add_argument(parser, "--origin_min", 1e-2, "The minimum distance of the initial primary root from the origin (cm)", float)
-    add_argument(parser, "--origin_max", 1e-1, "The maximum distance of the initial primary root from the origin (cm)", float)
-    add_argument(parser, "--r_ratio", 0.5, "Ratio of fine roots to structural roots based upon overall root diameter", float)
-    add_argument(parser, "--froot_threshold", 0.2, "Threshold for classifying a root as a fine root, rather than a structural root (mm)", float)
-    add_argument(parser, "--root_type", 1, "The root type to calculate summary statistics for", type=str, choices=ROOT_TYPES)
+    add_argument(parser, "--origin_min", 5, "The minimum distance of the initial primary root from the origin (cm)", float)
+    add_argument(parser, "--origin_max", 10, "The maximum distance of the initial primary root from the origin (cm)", float)
+    add_argument(parser, "--r_ratio", 0.5, "not used. Ratio of fine roots to structural roots based upon overall root diameter", float)
+    add_argument(parser, "--froot_threshold", 1.5, "Threshold for classifying a root as a fine root, rather than a structural root (mm)", float)
+    add_argument(parser, "--root_type", None, "The root type to calculate summary statistics for", type=str, choices=ROOT_TYPES)
 
     ## Primary
-    add_argument(parser, "--min_rnum_out", 8, "The minimum number of outer primary roots to be generated")
-    add_argument(parser, "--max_rnum_out", 12, "The maximum number of outer primary roots to be generated")
+    add_argument(parser, "--min_rnum_out", 2, "The minimum number of outer primary roots to be generated")
+    add_argument(parser, "--max_rnum_out", 10, "The maximum number of outer primary roots to be generated")
     add_argument(parser, "--min_rnum_in", 6, "The minimum number of inner primary roots to be generated")
     add_argument(parser, "--max_rnum_in", 10, "The maximum number of inner primary roots to be generated")
 

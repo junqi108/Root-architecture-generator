@@ -46,7 +46,8 @@ def get_parser():
 
     # Random 
     add_argument(parser, "--random_seed", None, "The random seed")
-
+    # de Vries et al. (2021) Mycorrhizal associations change root functionality...
+    add_argument(parser, "--species", 1, "The species associated with the root system", choices = [0, 1])
     return parser
 
 if __name__ == "__main__":
@@ -97,9 +98,9 @@ if __name__ == "__main__":
         "soil_block_size": SOIL_BLOCK_SIZE,
         "as_scalar": True,
         "values_only": False,
-        "x_locations": [0.1],  # Example x coordinates
-        "y_locations": [1.5],  # Example y coordinates
-        "x_tolerance": 0.2,  # Example tolerance for x
+        "x_locations": [0.1, 0.1],  # Example x coordinates
+        "y_locations": [0.3, 0.9],  # Example y coordinates
+        "x_tolerance": 0.1,  # Example tolerance for x
         "depth_interval": 0.1,  # Example depth interval in meters
         "ROOT_GROUP": ""
     }

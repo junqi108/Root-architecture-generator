@@ -107,8 +107,8 @@ def calc_rld_and_sum_for_multiple_locations(df: pd.DataFrame, x_locations: list,
             df_location = df[
                 (df['x'] >= (x_location - x_tolerance)) & 
                 (df['x'] <= (x_location + x_tolerance)) & 
-                (df['y'] >= (y_location - depth_interval/2)) & 
-                (df['y'] <= (y_location + depth_interval/2)) &
+                (df['y'] >= (y_location - x_tolerance)) & 
+                (df['y'] <= (y_location + x_tolerance)) &
                 root_group_query
             ].copy()
 
@@ -119,7 +119,7 @@ def calc_rld_and_sum_for_multiple_locations(df: pd.DataFrame, x_locations: list,
             df_location['depth_bin'] = pd.cut(df_location['z'], bins=depth_bins, include_lowest=True)
             rld_df = df_location.groupby('depth_bin')['length'].agg(['sum']).reset_index()
             rld_df.rename(columns={'sum': 'sum_root_length'}, inplace=True)
-            rld_df['sum_root_length'] = rld_df['sum_root_length']
+            rld_df['sum_root_length'] = rld_df['sum_root_length']*100
             rld_df['rld'] = rld_df['sum_root_length'] / (depth_interval * 100 * 2 * x_tolerance * 100 * 2 * x_tolerance * 100)
 
             # Add x, y location, and optionally root type to the DataFrame
