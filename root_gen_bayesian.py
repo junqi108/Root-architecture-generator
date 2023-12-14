@@ -42,14 +42,14 @@ def get_parser():
     add_argument(parser, "--visualise", 0, "Visualise the trial results", choices = [0, 1])
 
     # ABC-SMC
-    add_argument(parser,"--draws", 5, "The number of samples to draw from the posterior. And also the number of independent chains")
-    add_argument(parser, "--steps", 5, "The number of steps for each Markov Chain")
-    add_argument(parser, "--chains", 1, "The number of chains to sample. Running independent chains is important for some convergence statistics")
+    add_argument(parser,"--draws", 4, "The number of samples to draw from the posterior. And also the number of independent chains")
+    add_argument(parser, "--steps", 20, "The number of steps for each Markov Chain")
+    add_argument(parser, "--chains", 4, "The number of chains to sample. Running independent chains is important for some convergence statistics")
     add_argument(parser, "--parallel", 0, "Distribute computations across cores if the number of cores is larger than 1", choices = [0, 1])
     add_argument(parser, "--distance", "euclidean", "The data dissimilarity metric", str, choices = ["euclidean"])
 
     # de Vries et al. (2021) Mycorrhizal associations change root functionality...
-    add_argument(parser, "--species", 0, "The species associated with the root system", choices = [0, 1])
+    add_argument(parser, "--species", 1, "The species associated with the root system", choices = [0, 1])
 
     # Input 
     add_argument(parser, "--obs_file", "data/root_obs.csv", "The observed root data file name", str)

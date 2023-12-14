@@ -9,6 +9,8 @@ A library of methods relating to spatial properties of synthetic root system gen
 ##########################################################################################################
 
 # External
+import math
+import matplotlib.pyplot as plt
 import numpy as np
 
 ##########################################################################################################
@@ -143,3 +145,170 @@ def make_homogenous(matrix: np.array) -> np.ndarray:
     ones_matrix = np.ones((len(matrix), 1))
     homogenous_coordinates = np.hstack((matrix, ones_matrix)).T
     return homogenous_coordinates
+
+def degrees_scaler(arr: np.ndarray) -> np.ndarray:
+    """
+    Scale points to be about 360 degrees.
+
+    Args:
+        arr (np.ndarray): 
+            The array of points
+
+    Returns:
+        np.ndarray: 
+            The scaled array of points in degrees.
+    """
+    min_val = np.min(arr)
+    max_val = np.max(arr)
+    scaled_arr = (arr - min_val) / (max_val - min_val) 
+    coordinate_arr = scaled_arr * 360
+    return coordinate_arr
+    
+def constrain_points(arr: np.ndarray) -> np.ndarray:
+    """
+    Constrain points to be within 0-360 degrees.
+
+    Args:
+        arr (np.ndarray): 
+            The array of points
+
+    Returns:
+        np.ndarray: 
+            The constrained array of points in degrees.
+    """
+    arr = np.where(arr < 0, -1 * arr, arr)
+    arr = np.where(arr > 360, arr - 360, arr)
+    return arr
+
+def sample_half_circle(root_num: tuple, visualise_roots: bool, rng, density: np.ndarray = None):
+    """
+    Sample yaw and pitch degrees from a half-circle.
+
+    Args:
+        root_num (tuple): 
+            The number of roots.
+        visualise_roots (bool): 
+            Whether to visualise the roots.
+        rng (RNG): 
+            The random number generator.
+        density (list): 
+            A list of root density proportions per quadrant.
+
+    Returns:
+        tuple: 
+            The yaw and pitch.
+    """
+    if visualise_roots:
+        root_num = 1000
+    elif type(root_num) is tuple:
+        root_num = sum(root_num)
+    R = 1
+    if density:
+        yaw, pitch = half_circle_rejection_sampling(density, root_num, R, rng)
+    else:
+        phi = rng.random(size = root_num) * np.pi 
+        r = np.sqrt(rng.random(size = root_num)) * R 
+        yaw = r * np.cos(phi) * 180 + 180
+        pitch = r * np.sin(phi) * 180 - 45
+
+    if visualise_roots:
+        f = plt.figure(figsize=(15, 15))
+        a = f.add_subplot(111)
+        pitch_vis = -1 * pitch - 45
+        a.scatter(yaw, pitch_vis, marker='.')
+        a.set_title("Sampling points from a half-circle (5000 samples)")
+        a.set_xlabel('Yaw')
+        a.set_ylabel('Pitch')
+        a.set_aspect("equal")
+        a.set_xlim([-20, 380])
+        a.set_ylim([-200, 20])
+        plt.show()
+
+    return yaw, pitch
+
+def half_circle_rejection_sampling(density: list, root_num: int, R: int, rng) -> tuple:
+    """
+    Sample yaw and pitch degrees from a half-circle. 
+    Divide the half-circle into eight quadrants, and perform rejection sampling within each quadrant.
+
+    Args:
+        density (list): 
+            A list of root density proportions per quadrant.
+        root_num (int): 
+            The number of roots.
+        R (int): 
+            The radius.
+        rng (RNG):
+            The random number generator.
+
+    Returns:
+        tuple: 
+            The yaw and pitch.
+    """
+    density = [ float(d) for d in density ]
+    if len(density) != 8:
+        raise Exception("Root density for sampling distribution of roots must contain 8 values.")
+    if sum(density) != 1.0:
+        raise Exception("Root density for sampling distribution of roots must sum to 1.")
+    
+    yaw_list = []
+    pitch_list = []
+    yaw_base = 0
+
+    def __sample_half_circle(quadrant_len: int, pitch_intervals: tuple):
+        yaw_samples = []
+        while len(yaw_samples) < quadrant_len:
+            phi = rng.random(size = 1).item() * np.pi 
+            r = np.sqrt(rng.random(size = 1).item()) * R 
+            yaw = r * np.cos(phi) * 180 + 180
+            if yaw >= yaw_base and yaw <= yaw_base + 90: 
+                yaw_samples.append(yaw)
+        yaw_list.extend(yaw_samples)
+
+        pitch_samples = []
+        lower_pitch, upper_pitch = pitch_intervals
+        while len(pitch_samples) < quadrant_len:
+            phi = rng.random(size = 1).item() * np.pi 
+            r = np.sqrt(rng.random(size = 1).item()) * R 
+            pitch = r * np.sin(phi) * 180 
+            if pitch >= lower_pitch and pitch <= upper_pitch:
+                pitch -= 45
+                pitch_samples.append(pitch)
+        pitch_list.extend(pitch_samples)
+
+    for i in range(0, len(density), 2):
+        upper_quadrant_len = math.ceil(density[i] * root_num)
+        lower_quadrant_len = math.ceil(density[i + 1] * root_num)
+
+        if upper_quadrant_len > 0:
+            __sample_half_circle(upper_quadrant_len, (90, 180))
+        if lower_quadrant_len > 0:
+            __sample_half_circle(lower_quadrant_len, (0, 90))
+
+        yaw_base += 90
+
+    yaw = np.array(yaw_list)
+    pitch = np.array(pitch_list)
+    return yaw, pitch
+
+def sample_half_cone(root_num: tuple, visualise_roots: bool, rng, density: np.ndarray = None) -> tuple:
+    """
+    Sample yaw, pitch, and roll degrees from a half-circle.
+
+    Args:
+        root_num (tuple): 
+            The number of roots.
+        visualise_roots (bool): 
+            Whether to visualise the roots.
+        rng (RNG): 
+            The random number generator.
+        density (list): 
+            A list of root density proportions per quadrant.
+
+    Returns:
+        tuple: 
+            The yaw, pitch, and roll.
+    """
+    yaw, pitch = sample_half_circle(root_num, visualise_roots, rng, density)
+    roll = rng.uniform(50, 75, root_num) # 45 deg => Nearly parallel to parent. 120 deg => Nearly perpendicular to parent          
+    return yaw, pitch, roll
