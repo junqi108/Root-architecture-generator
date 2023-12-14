@@ -46,7 +46,7 @@ def get_parser():
     add_argument(parser, "--nplants", 1, "The number of plants to generate roots for")
     add_argument(parser, "--morder", 4, "The maximum root organ order")
     add_argument(parser, "--r_ratio", 0.5, "Ratio of fine roots to structural roots based upon overall root diameter", float)
-    add_argument(parser, "--froot_threshold", 0.15, "Threshold for classifying a root as a fine root, rather than a structural root (mm or cm not sure)", float)
+    add_argument(parser, "--froot_threshold", 1.5, "Threshold for classifying a root as a fine root, rather than a structural root (mm)", float)
 
     ## Primary
     add_argument(parser, "--rnum_out", 10, "The number of outer primary roots to be generated")
