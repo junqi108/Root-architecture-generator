@@ -11,6 +11,6 @@ services:
     mem_reservation: 2g
     volumes:
       - .:/usr/src/app
-    command: conda run -n rootSim python ./root_gen_bayesian.py
+    command: conda run -n rootSim python ./root_gen_bayesian.py --draws 500 --chains 10000
     # command: conda run -n rootSim python ./root_gen.py --from_config 1
     # command: conda run -n rootSim python ./root_gen.py
