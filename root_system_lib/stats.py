@@ -700,16 +700,13 @@ def filter_and_convert_to_numpy(df: pd.DataFrame, grouping_var: str, range_start
         filtered_df = filtered_df.dropna(subset=select_vars)
         filtered_df = filtered_df[np.isfinite(filtered_df[select_vars]).all(axis=1)]
 
-        if not filtered_df.empty:
-            # Concatenate selected variables into one NumPy array
-            return np.concatenate([filtered_df[var].values[:, None] for var in select_vars], axis=1)
-        else:
-            print("Filtered DataFrame is empty.")
-            return np.array([])
+    if not filtered_df.empty:
+        # Concatenate selected variables into one one-dimensional NumPy array
+        return np.concatenate([filtered_df[var].values.flatten() for var in select_vars])
     else:
-        print(f"'{grouping_var}' column not found in the DataFrame.")
+        print("Filtered DataFrame is empty.")
         return np.array([])
-
+    
 # Example usage
 # df is your DataFrame
 # grouping_var = 'depth_bin'
