@@ -82,7 +82,9 @@ def main() -> None:
     if SOIL_GRID:
         soil_grid = make_soil_grid(df, SOIL_BLOCK_SIZE)
 
-    visualise_roots(df, thickness = THICKNESS, include_properties = INCLUDE_PROP, soil_grid = soil_grid)
+    # Define the full path for the saved plot
+    save_plot_path = f"{DIR}/root_visualisation.html"  # or any other file format
+    visualise_roots(df, thickness = THICKNESS, include_properties = INCLUDE_PROP, soil_grid = soil_grid, save_file=save_plot_path)
     if PLOT_STATS:
         end_coords = get_df_coords(df, "coordinates")
         plot_root_stats(end_coords, STATS_IN)

@@ -20,7 +20,7 @@ from matplotlib import cm
 ### Library
 ##########################################################################################################
 
-def visualise_roots(df: pd.DataFrame, thickness: int = 4, include_properties = False, soil_grid = None) -> None:
+def visualise_roots(df: pd.DataFrame, thickness: int = 4, include_properties = False, soil_grid = None, save_file: str=None) -> None:
     """
     Provide a 3D visualisation of the root system.
     
@@ -85,6 +85,11 @@ def visualise_roots(df: pd.DataFrame, thickness: int = 4, include_properties = F
 
     fig.layout.update(showlegend = False) 
     fig.show()
+  # Save the plot to a file if save_file is provided
+    if save_file:
+        fig.write_html(save_file)
+        print(f"Plot saved to {save_file}")   
+    
 
 def root_dist_depth(stats_df: pd.DataFrame) -> None:
     """
