@@ -18,42 +18,25 @@ from typing import Tuple
 ##########################################################################################################
 
 # de Vries et al. (2021) Mycorrhizal associations change root functionality...
+# check more parameters at pages et al., 2014: Calibration and evaluation of ArchiSimple, a simple model of root
+# system architecture
 class DeVriesParameters:
     """Root system parameters from de Vries et al. (2021)."""
     def __init__(self, species, rng) -> None:
-        if species == 0:
-            # Constants
-            self.ibd: Tuple[float] = (0.0078, 0.0078) # Inter Branch Distance
-            self.dinit: Tuple[float] = (0.11, 0.11) # Initial root Diameter in cm
-            self.groot: float = 0.0075 # Base rate of Gravitropism 
-            self.rzone: float = -1e-4 #-0.001 # No lateral zone in cm
-            self.angle_avg: float = 60 # average insertion angle of lateral roots
-            self.angle_var: float = 20 # variation in the insertion angle of lateral roots
-            self.rsp: Tuple[float] = (0.7, 0.5) # Ratio between secondary and primary roots
-            self.rts: Tuple[float] = (0.375, 0.375) # Ratio between tertiary and secondary roots
-            self.avg_root_r: float = 0.00105 # average root radius
-            self.mcp: Tuple[float] = (50, 50) # random root movement based on mechanical staticraints; radial degrees/m
-            self.sdd: Tuple[float] = (0, 0) # Standard deviation diameter for RDM
-            self.rtd: float = 0.05 # Root tissue density (g/cm3)
-
-        elif species == 1:
-            # Constants for grapvine
-            self.ibd: Tuple[float] = (0.0078, 0.0078) # Inter Branch Distance
-            self.dinit: Tuple[float] = (0.11, 0.11) # Initial root Diameter in cm
-            self.groot: float = 0.0075 # Base rate of Gravitropism 
-            self.rzone: float = -1e-4 #-0.001 # No lateral zone in cm
-            self.angle_avg: float = 60 # average insertion angle of lateral roots
-            self.angle_var: float = 20 # variation in the insertion angle of lateral roots
-            self.rsp: Tuple[float] = (0.7, 0.5) # Ratio between secondary and primary roots
-            self.rts: Tuple[float] = (0.375, 0.375) # Ratio between tertiary and secondary roots
-            self.avg_root_r: float = 0.00105 # average root radius
-            self.mcp: Tuple[float] = (50, 50) # random root movement based on mechanical staticraints; radial degrees/m
-            self.sdd: Tuple[float] = (0, 0) # Standard deviation diameter for RDM
-            self.rtd: float = 0.05 # Root tissue density (g/cm3)
-        else:
-            # Handle unexpected species value
-            raise ValueError(f"Unknown species: {species}")
-        
+        # Constants for both species
+        self.groot: float = 0.0075 # Base rate of Gravitropism 
+        self.rzone: float = -1e-4 # No lateral zone in cm
+        # varies with species
+        self.ibd: Tuple[float, float] = (0.0078, 0.0031) # Inter Branch Distance
+        self.dinit: Tuple[float, float] = (0.11, 3.1) # Initial root Diameter in cm for first species, 3.1 for grapevine
+        self.angle_avg: Tuple[float, float] = (60, 60) # Average insertion angle of lateral roots
+        self.angle_var: Tuple[float, float] = (20, 20) # Variation in the insertion angle of lateral roots
+        self.rsp: Tuple[float, float] = (0.5, 0.27) # Ratio between secondary and primary roots
+        self.rts: Tuple[float, float] = (0.375, 0.375) # Ratio between tertiary and secondary roots for first species, 0.27 for grapevine
+        self.mcp: Tuple[float, float] = (50, 50) # Mechanical constraints; radial degrees/m
+        self.sdd: Tuple[float, float] = (0, 0.1) # Standard deviation diameter for RDM
+        self.rtd: float = 0.05 if species == 0 else 0.15 # Root tissue density (g/cm3), different for grapevine
+                
         self.species: int = species
         self.rng: np.random.Generator = rng
 
@@ -93,7 +76,7 @@ class DeVriesParameters:
         angle : float  
             The root angle.
         """
-        return self.rng.normal(self.angle_avg, self.angle_var)
+        return self.rng.normal(self.angle_avg[self.species], self.angle_var[self.species])
 
     def get_rdm(self) -> float: 
         """
