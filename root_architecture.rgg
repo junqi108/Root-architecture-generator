@@ -1,0 +1,377 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.io.*;
+import de.grogra.vecmath.Math2;
+import de.grogra.xl.lang.*;
+
+// File Reader
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap; 
+import java.util.List;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+
+// System
+import de.grogra.vecmath.Math2;
+import de.grogra.vecmath.Matrix34d;
+import de.grogra.numeric.*;
+import de.grogra.numeric.cvode.*;
+import de.grogra.ext.x3d.util.Util;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
+import org.apache.commons.math3.geometry.euclidean.threed.RotationOrder;
+
+// file: change this to point to YOUR directory!!
+final static String MAINPATH = "C:\\Users\\James\\Desktop\\functional-structural-apple-model/";
+final static String PATH_INPUT = MAINPATH + "Utils/root_system/data/root_sim/";
+ 
+public static RootDataReader rootData;
+public static int count = 0;
+public static NodeMap nm = new NodeMap();
+
+//objects
+module Shoot(super.length, float dia, int ID, int ordnung) extends F(length,dia*0.75) {
+	 { setShader((ordnung==1)?EGA_6:(ordnung==2)?EGA_10:EGA_10);
+	 	setTransform(new TMatrix4d()); }
+	
+	public void setDirection(Vector3d direction)
+	{
+		final Matrix3d m = new Matrix3d();
+		Math2.getOrthogonalBasis(direction, m, true);
+		((TMatrix4d) this[transform]).setRotationScale(m);
+	}
+} //==> M(0.2) TextLabel(ID);
+
+module N() extends Sphere(0.1) {
+	 { setShader(EGA_6);
+		   setTransform(new TMatrix4d()); }
+	public void setLocation(Point3d location)
+	{
+		((TMatrix4d) this[transform])[m03] = location.x; 
+		((TMatrix4d) this[transform])[m13] = location.y; 
+		((TMatrix4d) this[transform])[m23] = location.z;
+	}
+	
+}
+  
+
+//auxiliary classes
+
+class XNode implements Serializable{
+	ArrayList childs;
+	int id;
+	int pid;
+	int apChild=0;
+	int ordnung;
+	Point3d start;
+	double diameter;
+	boolean initiated = false;
+	
+	public XNode(int id, Point3d Start, double diameter, int pid, int ordnung){
+		this.id=id;
+		this.pid=pid;
+		this.start=Start;
+		this.diameter=diameter;
+		this.ordnung=ordnung;
+		childs=new ArrayList();
+	}
+	
+	public void addChild(int idx){
+		childs.add(idx);
+	}
+}
+
+class NodeMap implements Serializable{
+	Map r = new HashMap();
+	public void addNode(XNode n){
+		r.put(n.id,n);
+	}
+	public XNode getNode(Object id){
+		return (XNode)r.get(id);
+	}
+	public Object[] getKeySet(){
+		return r.keySet();
+	}
+}
+
+private Point3d minus(Point3d a, Point3d b){
+	return new Point3d(a.x-b.x,a.y-b.y,a.z-b.z);
+}
+
+//read csv file
+public void read() {
+	count = 0;
+	clearConsole();
+	readData();
+	Map rootMap = rootData.getRootMap();
+		
+		
+	for (List segmentList : rootMap.values()) {
+		for (RootRow segment: segmentList) {
+			int id = segment.id;
+			double x = segment.x;
+			double y = segment.y;
+			double z = segment.z;
+			double diameter = segment.diameter;
+			int ordnung= segment.order;
+			int pid = segment.parent;
+			nm.addNode(new XNode(id, new Point3d(x,y,z),diameter,pid,ordnung));
+		}
+	}
+			
+	int root=0;
+	for(Object i : nm.getKeySet()){
+		int pid=nm.getNode(i).pid;
+		if(pid!=-1){
+			if(nm.getNode(pid).ordnung==nm.getNode(i).ordnung){
+					nm.getNode(pid).apChild=nm.getNode(i).id;
+			}else{
+				nm.getNode(pid).addChild(nm.getNode(i).id);
+			}
+		}else{
+			root = nm.getNode(i).id;
+		}
+	}
+	Node a = new Node();
+	[Floor==> a;]
+	derive();
+	architectureRunner(root,a);
+}
+
+public void architectureRunner(int id, Node a) {
+	println("ID " + id);
+	count++;
+	println("count " + count);
+	XNode N = nm.getNode(id);
+
+	if(N.apChild != 0) {
+		XNode ApChild = nm.getNode(N.apChild);
+		println("apChild " + N.apChild);
+		deployArchitectureRunner(id, a, N, ApChild);
+	} else {
+		for (Object i : nm.getNode(id).childs) {
+			XNode ApChild=nm.getNode(i); 
+			deployArchitectureRunner(id, a, N, ApChild);
+		}
+	}
+}
+
+private void deployArchitectureRunner(int id, Node a, XNode N, XNode ApChild) {
+	Point3d rel = minus(N.start,ApChild.start);
+	float length=Math.sqrt(Math.pow(N.start.x-ApChild.start.x,2.0)+Math.pow(N.start.y-ApChild.start.y,2.0)+Math.pow(N.start.z-ApChild.start.z,2.0));
+	if(N.initiated) { return; }
+	Node ca = new Node();
+	Shoot s = new Shoot(length, N.diameter,N.id, N.ordnung);
+	N.initiated = true;
+	s.setDirection(N.start-ApChild.start);
+	TMatrix4d inver = new TMatrix4d();
+	inver.set((Matrix4d)(s[transform]));
+	inver.invert();
+	N cn = new N();
+	cn[transform]=inver;
+	[a ==> s cn ca;]
+	derive();		
+	architectureRunner(ApChild.id,ca);
+	for (Object i : nm.getNode(id).childs){
+		XNode LaChild=nm.getNode(i); 
+		Point3d LaRel=minus(ApChild.start,LaChild.start);
+		float dis=LaChild.start.distance(ApChild.start)*-1;
+		Node xa = new Node();
+		cn = new N();
+		cn[transform]=inver;
+		[s ==>s [M(dis) cn xa] ;]
+		derive();
+		architectureRunner(LaChild.id,xa);		
+	}
+}
+
+ 
+protected void init ()
+[
+	{
+		count = 0;
+	}
+	
+	Axiom ==> [Plane().(setShader(WHITE)) ] Floor;
+]
+
+
+/********************************************************************************
+
+/********************************************* 
+				DATA READER
+************************************************/
+
+static void readData()
+{
+	rootData = new RootDataReader(PATH_INPUT); 
+	rootData.readData("root_sim.csv");
+}
+
+abstract module DataReader
+{	
+	protected String pathInput;
+	protected String sep = ",";
+	protected Map indexMap;
+
+	// Open and read the parameter file into an array of strings
+	protected String[] readFile(String filename) throws IOException 
+	{
+		String path = this.pathInput + filename;
+		File file = new File(path);
+		StringBuffer sb = new StringBuffer();
+		BufferedReader inFile = new BufferedReader(new FileReader(file.getAbsolutePath()));
+		String line = "";
+		while ((line = inFile.readLine()) != null) {
+			sb.append(line + "\n");
+		}
+						
+		inFile.close();
+		String data = sb.toString();
+		String[] dataArr = data.split("\n");
+		return dataArr;
+	}
+}
+
+module RootDataReader extends DataReader
+{	
+	protected Map rootMap;
+
+	// Constructor
+	public RootDataReader(String pathInput)
+	{
+		this.pathInput = pathInput;
+		rootMap = new HashMap();
+		initIndices();
+	}
+
+	public Map getRootMap() {
+		return rootMap;
+	}
+
+	public List getRootList(int rootID) {
+		List rootList = (ArrayList) rootMap.get(rootID);
+		if(rootList == null) {
+			rootList = new ArrayList();
+			rootMap.put(rootID, rootList);
+		}
+		return rootList;
+	}
+	
+	// Read parameters from shoot file into arrays which will be accessed during initiation
+	public void readData(String filename) 
+	{	
+		String[] dataArr = readFile(filename);
+		List rootList;
+		RootRow row;
+
+		for(int i = 1; i < dataArr.length; i++) { 
+			row = new RootRow(indexMap, dataArr[i], sep);
+			rootList = getRootList(row.rootID);			
+			rootList.add(row);
+		}
+	}
+
+	protected void initIndices() {
+		indexMap = new HashMap();
+		indexMap.put("id", 0);
+		indexMap.put("rootID", 1);
+		indexMap.put("order", 2);
+		indexMap.put("segmentRank", 3);
+		indexMap.put("parent", 4);
+		indexMap.put("startCoordinates", 5);
+		indexMap.put("endCoordinates", 6);
+		indexMap.put("diameter", 7);
+		indexMap.put("length", 8);
+		indexMap.put("x", 9);
+		indexMap.put("y", 10);
+		indexMap.put("z", 11);
+	}
+}
+
+abstract class RowBase {
+	protected String sep = ",";
+	protected Map indexMap;
+
+	public String get(String[] row, String indxName) {
+		int indx = (Integer) indexMap.get(indxName);
+		return row[indx];
+	}
+	
+	public int getInt(String[] row, String indxName) {
+		int indx = (Integer) indexMap.get(indxName);
+		return Integer.parseInt(row[indx]);
+	}
+
+	public double getDouble(String[] row, String indxName) {
+		int indx = (Integer) indexMap.get(indxName);
+		return Double.parseDouble(row[indx]);
+	}
+
+	// Return a Vector3D constructed by parsing the coordinates in the given string
+	protected double[] getCoordVector(String coordString)
+	{
+		String[] splitString = coordString.split(" ");		
+		double[] coordArray = new double[splitString.length];
+		for (int i = 0; i < coordArray.length; i++) {
+			coordArray[i] = Double.parseDouble(splitString[i]);
+		}
+			
+		return coordArray;
+		//Vector3D coordVector = new Vector3D(coordArray);
+		//return coordVector;
+	}
+
+	// Convert raw row to row object
+	abstract void toRow(String row);
+}
+
+class RootRow extends RowBase {
+	// Properties
+	int id = 0;
+	int rootID = 0;
+	int order = 0;
+	int segmentRank = 0;
+	int parent = 0;
+	Vector3D start;
+	Vector3D end;
+	double diameter = 0;
+	double length = 0;
+	double x;
+	double y;
+	double z;
+	
+	// Constructor
+	public RootRow(Map indexMap, String row, String sep) {
+		this.indexMap = indexMap;
+		this.sep = sep;
+		this.toRow(row);
+	}
+
+	public void toRow(String row) {
+		String[] splitRow = row.split(sep);
+		id = this.getInt(splitRow, "id");
+		rootID = this.getInt(splitRow, "rootID");
+		order = this.getInt(splitRow, "order");
+		segmentRank = this.getInt(splitRow, "segmentRank");
+		parent = this.getInt(splitRow, "parent");
+		diameter = this.getDouble(splitRow, "diameter");
+		length = this.getDouble(splitRow, "length");
+
+		x = this.getDouble(splitRow, "x");
+		y = this.getDouble(splitRow, "y");
+		z = this.getDouble(splitRow, "z");
+	}
+}
+
+/********************************************************************************
+	INITIATION
+********************************************************************************/
+
+ 
