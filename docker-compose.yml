@@ -18,6 +18,6 @@ services:
     #   python ./root_gen.py --from_config 1 --dir 'data/optimise' &&
     #   conda deactivate"  
     # command: conda run -n rootSim python ./generate_summary_stats.py
-    # command: conda run -n rootSim python ./root_gen_optimise.py --n_trials 1 --stats_file "data/summary_stats/root_stats_1.csv"
+    command: conda run -n rootSim python ./root_gen_optimise.py --n_trials 1 --stats_file "data/summary_stats/root_stats_1.csv"
     # command: conda run -n rootSim python ./root_gen.py --from_config 1
-    command: conda run -n rootSim python ./plot_root.py --dir "data/optimise" --input "root_optimise.csv" # not displayed
+    # command: conda run -n rootSim python ./plot_root.py --dir "data/optimise" --input "root_optimise.csv" # not displayed
